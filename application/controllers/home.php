@@ -41,13 +41,17 @@ class Home extends CI_Controller {
 	}
 
 	function createAdmin(){
-		$dbchk = $this->db->where('user', 'admin')->get('users');
-		if($dbchk->num-rows() == 0){
-			$dti = array("user" => "admin", "password" => sha1($this->config->item('ADMIN_PASSWORD')), 'gids' => '1,2,3', 'id' => 1);
-			$this->db->insert('users', $dti);
-			echo "Admin user created.";
+		if($this->config->item('AUTH_METHOD') == "INTERNAL"){
+			$dbchk = $this->db->where('user', 'admin')->get('users');
+			if($dbchk->num-rows() == 0){
+				$dti = array("user" => "admin", "password" => sha1($this->config->item('ADMIN_PASSWORD')), 'gids' => '1,2,3', 'id' => 1);
+				$this->db->insert('users', $dti);
+				echo "Admin user created.";
+			} else {
+				echo "The admin account already exists.";
+			}
 		} else {
-			echo "The admin account already exists.";
+			echo "This site is not configured to use internal auth.";
 		}
 	}
 
