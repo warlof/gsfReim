@@ -40,40 +40,15 @@ class Home extends CI_Controller {
 	 	}
 	}
 
-	function createInternalAuth(){
-		$this->load->dbforge();
-		$columns = array(
-			'user' => array(
-				'type' => 'VARCHAR',
-				'constraint' => '100',
-				'null' => FALSE
-			),
-			'password' => array(
-				'type' => 'VARCHAR',
-				'constraint' => '255',
-				'null' => FALSE
-			),
-			'gids' => array(
-				'type' => 'VARCHAR',
-				'constraint' => '100',
-				'null' => TRUE,
-				'default' => ''
-			),
-			'active' => array(
-				'type' => 'INT',
-				'constraint' => '1',
-				'null' => FALSE,
-				'default' => '1'
-			)
-		);
-		$this->dbforge->add_field($columns);
-		$this->dbforge->add_field('id');
-		$this->dbforge->create_table("users", TRUE);
-		
-		$dti = array("user" => "admin", "password" => sha1($this->config->item('ADMIN_PASSWORD')), 'gids' => '1,2,3', 'id' => 1);
-		$this->db->insert('users', $dti);
-		
-		echo "Database created and admin account created using password in config file.";
+	function createAdmin(){
+		$dbchk = $this->db->where('user', 'admin')->get('users');
+		if($dbchk->num-rows() == 0){
+			$dti = array("user" => "admin", "password" => sha1($this->config->item('ADMIN_PASSWORD')), 'gids' => '1,2,3', 'id' => 1);
+			$this->db->insert('users', $dti);
+			echo "Admin user created.";
+		} else {
+			echo "The admin account already exists.";
+		}
 	}
 
 	public function index() {
