@@ -4,7 +4,16 @@ GSF Reimbursement Application
 ##Setup
 1. Edit `application/config/config.php` and set the base url the site will sit on as well as a random string in `$config['encryption_key']`.
 2. Edit `application/config/database.php` and enter the db credentials
-3. Import the `gsfReim.sql` file into the database you created, this will create the initial tables and set the base settings.
+3. Import the `gsfReim.sql` file into the database you created, this will create the initial tables and set the base settings. **NOTE** If you do not have root on your database instance, you need to change the definer in the sql file. Something like:
+```
+sed -i 's/DEFINER=[^*]*\*/\*/g' gsfReim.sql
+```
+4. You need to create an .htaccess file containing the following and place it in the root:
+```
+RewriteEngine on
+RewriteCond $1 !^(index\.php|assets|images|favicon.ico|robots\.txt)
+RewriteRule ^(.*)$ /index.php/$1 [L]
+```
 
 ##Authentication
 Originally, this was written in a way that it only worked with CROWD. I have now written an internal authentication mechanism.
@@ -41,6 +50,6 @@ These regions are peacetime specific regions. What it is used for is determining
 These are the admin settings. You shouldn't need to change a whole lot here, aside from initial config. Here is a quick overview of what each setting does:
 * `ptCap` - This is pretty self-explanatory. This is the cap for peacetime payouts. This number is included in determining whether someone is eligible for peacetime reimbursement or not. Default: **1000000000**
 * `maxDayDiff` - This is used to set how old a loss can be. Default: **30**
-* `waffeBonus` - This is a flag that turns the waffe bonus on or off. In the future, I will likely add a configurable variable that controls which corporation gets the bonus. Default: **1**
+* `waffeBonus` - This is a decimal value for a percent. Meaning if set to 1, the bonus is 100%. If it is 0.5, then it would be 50%. To turn it off, set to 0. Default: **1**
 * `waffeBonusCap` - This is the cap for waffe bonus. Like the peacetime cap, this determines whether someone is eligible for the waffe bonus or not. Default: **300000000**
 * `acceptLosses` - This setting will either allow or disallow posting of losses. If set to `1`, users can submit losses. If set to `0`, losses will not be accepted. Default: **1**
