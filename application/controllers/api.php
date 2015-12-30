@@ -28,7 +28,7 @@ class Api extends CI_Controller {
 	}
 	
 	function getwalletdata() {
-		$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode(""))));
+		$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode("kilgarth:voicepowercooksheep"))));
 
 		return $this->proxy->http('GET', 'https://apitool.goonfleet.com/corp/corp/WalletJournal.xml.aspx?rowCount=2560&keyid=667531913&vcode=ok&accountKey=1001');
 	}

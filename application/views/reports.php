@@ -1,5 +1,9 @@
-<link rel="stylesheet" type="text/css" href="/assets/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="/assets/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/buttons/1.0.3/js/buttons.bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.0.3/css/buttons.bootstrap.min.css">
 <style>
 	.ui-datepicker-calendar {
 		display: none;
@@ -17,16 +21,17 @@
 				$(this).datepicker('setDate', new Date(year, month,1));
 			}
 		});
-		$('#byShipTable').DataTable();
-		$('#byCorpTable').DataTable();
-		$('#byUserTable').DataTable();
-		$('#byRegionTable').DataTable();
-		$('#byTypeTable').DataTable();
-		$('#reimCapTable').DataTable();
-		$('#payoutsByUserTable').DataTable();
+		$('#byShipTable').DataTable({buttons: ['csv','copy']});
+		$('#byCorpTable').DataTable({buttons: ['csv','copy']});
+		$('#byUserTable').DataTable({buttons: ['csv','copy']});
+		$('#byRegionTable').DataTable({buttons: ['csv','copy']});
+		$('#byTypeTable').DataTable({buttons: ['csv','copy']});
+		$('#reimCapTable').DataTable({buttons: ['csv','copy']});
+		$('#payoutsByUserTable').DataTable({buttons: ['csv','copy']});
 		$('#allPayoutsTable').DataTable({
 			"pageLength": 50,
-			"order": [2, 'desc']
+			"order": [2, 'desc'],
+			"buttons": ['csv','copy']
 		});
 		
 	});

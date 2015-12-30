@@ -51,10 +51,12 @@ class Login extends CI_Controller {
 				$vars['inCapSwarm'] = $userData['inCapSwarm'];
 
 				$this->session->set_userdata('vars',$vars);
-				$ldata = array(	'user'	=> $this->session->userdata('user'),
+				
+				$ldata = array(	'user'	=> $this->session->userdata('vars')['user'],
 								'type'	=> 'LOGIN',
 								'data'	=> 'IP : ' . $this->input->ip_address());
 				$this->db->insert('ulog', $ldata);
+
 			} else {
 				$dti = array('user' => $user, 'data' => "FAILED LOGIN ATTEMPT.<br>REASON: " . $userData['errReason'] . "<br>MESSAGE: " . $userData['errMessage'], 'type' => 'FAILED LOGIN');
 				$this->db->insert('ulog', $dti);

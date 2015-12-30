@@ -4,9 +4,9 @@ class User_model extends CI_Model {
 	function __construct()
 	{
 		parent::__construct();
-		$this->crowdUrl = "";
-		$this->crowdUser = "";
-		$this->crowdPass = "";
+		$this->crowdUrl = "https://crowd.goonfleet.com/crowd/rest/usermanagement/1/";
+		$this->crowdUser = "reimb-kilgarth";
+		$this->crowdPass = "wormdegreestillbase";
 	}
 	function get_val($str, $key1, $key2) {
 		if(strpos('@@@' . $str, $key1) <> 0 && strpos('@@@' . $str, $key2) <> 0) {

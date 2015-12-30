@@ -43,7 +43,7 @@ class Home extends CI_Controller {
 	function createAdmin(){
 		if($this->config->item('AUTH_METHOD') == "INTERNAL"){
 			$dbchk = $this->db->where('user', 'admin')->get('users');
-			if($dbchk->num-rows() == 0){
+			if($dbchk->num_rows() == 0){
 				$dti = array("user" => "admin", "password" => sha1($this->config->item('ADMIN_PASSWORD')), 'gids' => '1,2,3', 'id' => 1);
 				$this->db->insert('users', $dti);
 				echo "Admin user created.";
