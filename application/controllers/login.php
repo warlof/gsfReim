@@ -71,17 +71,20 @@ class Login extends CI_Controller {
 	}
 	
 	function register(){
-		$this->load->model('User_model');
-		$user = $this->input->post("user", TRUE);
-		$password = $this->input->post('password', TRUE);
-		
-		$ret = $this->User_model->registerUser($user, $password);
-		
-		if($ret['message']){
-			echo "Account successfully created, you may now login.";
+		if($this->config->item("ALLOW_REGISTRATION")){
+			$this->load->model('User_model');
+			$user = $this->input->post("user", TRUE);
+			$password = $this->input->post('password', TRUE);
+			
+			$ret = $this->User_model->registerUser($user, $password);
+			
+			if($ret['message']){
+				echo "Account successfully created, you may now login.";
+			} else {
+				echo $ret['err'];
+			}
 		} else {
-			echo $ret['err'];
-		}
+			echo "You are fucking stupid.";
+		}	
 	}
-
 }

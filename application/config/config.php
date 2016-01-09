@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://reim.kilgarth.net';
+$config['base_url'] = 'https://reim.kilgarth.net';
 
 /*
  * AUTH_METHOD
@@ -32,8 +32,9 @@ $config['base_url'] = 'http://reim.kilgarth.net';
  * 
  */
  
-$config['AUTH_METHOD'] = "CROWD";
-$config['ADMIN_PASSWORD'] = 'asdqwe123';
+$config['AUTH_METHOD'] = "CROWD";			//Set to INTERNAL to use internal authentication.
+$config['ADMIN_PASSWORD'] = 'asdqwe123';	//Set to whatever you want the admin account password to be.
+$config['ALLOW_REGISTRATION'] = TRUE;		//Only applies to when using internal auth, will not affect any external authentication.
 
 
 /*

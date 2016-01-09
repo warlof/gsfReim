@@ -37,6 +37,13 @@ class Reports extends CI_Controller {
 		$dateStr = strtotime($date);
 		$data['date'] = date('F, Y', $dateStr);
 		$reimCap = $this->db->where('name','ptCap')->get('adminSettings');
+		$ptPayoutId = $this->db->where('name', 'ptPayoutId')->get('adminSettings');
+		if($ptPayoutId->num_rows() > 0){
+			$ptPID = $ptPayoutId->row(0)->value;
+		} else {
+			$this->db->insert("adminSettings", array('name' => 'ptPayoutId', 'value' => 1));
+			$ptPID = 1;
+		}
 		$data['ptCap'] = $reimCap->row(0)->value;
 		$data['byUser'] = $this->db->select('k.submittedBy, COUNT(*) AS count, SUM(pc.payoutAmount) AS total')
 									->from('kills k')
@@ -75,7 +82,7 @@ class Reports extends CI_Controller {
 									->from('kills k')
 									->join('paymentsCompleted pc', 'pc.killID = k.killID', 'left')
 									->where('k.paid','1')
-									->where('pc.payoutType', '4')
+									->where('pc.payoutType', $ptPID)
 									->like('killTime', $date, 'after')
 									->group_by('submittedBy')
 									->order_by('submittedBy')

@@ -58,7 +58,7 @@ $(document).ready(function() {
 		}
 	}
 </script>
-<?php if($this->config->item("AUTH_METHOD") == "INTERNAL"){ ?>
+<?php if($this->config->item("AUTH_METHOD") == "INTERNAL" && $this->config->item("ALLOW_REGISTRATION")){ ?>
 	<script>
 		$(document).ready(function() {
 			$("#registerAccount").click(function(){
@@ -190,7 +190,7 @@ if($vars['isReimDir'] == 1){?>
 					</div>
 					<button type="submit" class="btn btn-primary">Login</button>
 					<?php
-					if($this->config->item('AUTH_METHOD') == "INTERNAL"){ ?>
+					if($this->config->item('AUTH_METHOD') == "INTERNAL" && $this->config->item("ALLOW_REGISTRATION")){ ?>
 						<button type="button" class="btn btn-success" id="registerAccount" value="Register">Register</button>
 					<?php } ?>
 					</form>
