@@ -2,12 +2,18 @@
 	function resBlock(){
 		var nREle = document.getElementById("numRes");
 		var numRes = nREle.options[nREle.selectedIndex].value;
-		
+		var cOnly = document.getElementById("capsOnly");
+		if cOnly.checked {
+			capsOnly = 1;
+		} else {
+			capsOnly = 0;
+		}
+
 //		alert(numRes);
 		$.ajax({
 			url: "<?php echo base_url('home/claimBlock'); ?>",
 			type: 'POST',
-			data: {numRes: numRes},
+			data: {numRes: numRes, capsOnly: capsOnly},
 			success: function(msg) {
 				alert(msg);
 				location.reload();
@@ -39,6 +45,12 @@
 					<option value="30">30</option>
 					<option value="50">50</option>
 				</select>
+				<?php
+				$vars = $this->session->userdata("vars");
+					if($vars['isCapDir'] == 1){ ?>
+						<span class="input-group-addon">Caps Only? <input type="checkbox" value="t" id="capsOnly" /></span>
+					<?php }
+				?>
 			</div>
 			<br>
 			<button type="button" class="btn btn-success" onclick="resBlock()" value="Reserve">Reserve</button>

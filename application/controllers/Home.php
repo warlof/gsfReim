@@ -7,10 +7,10 @@ class Home extends CI_Controller {
 	 *
 	 * Maps to the following URL
 	 * 		http://example.com/index.php/welcome
-	 *	- or -  
+	 *	- or -
 	 * 		http://example.com/index.php/welcome/index
 	 *	- or -
-	 * Since this controller is set as the default controller in 
+	 * Since this controller is set as the default controller in
 	 * config/routes.php, it's displayed at http://example.com/
 	 *
 	 * So any other public methods not prefixed with an underscore will
@@ -23,6 +23,7 @@ class Home extends CI_Controller {
 		$this->isReim = FALSE;
 		$this->isReimDir = FALSE;
 		$this->isBanned = FALSE;
+		$this->isCapDir = FALSE;
 		$this->vars = $this->session->userdata('vars');
 	 	if($this->vars['logged_in'] == TRUE){
 	 		$this->logged_in = TRUE;
@@ -34,6 +35,9 @@ class Home extends CI_Controller {
 		 	}
 			if($this->vars['isBanned'] == 1){
 				$this->isBanned = TRUE;
+			}
+			if($this->vars['isCapDir'] == 1){
+				$this->isCapDir = TRUE;
 			}
 			$acceptLosses = $this->db->where('name','acceptLosses')->get('adminSettings');
 			$this->accLosses = $acceptLosses->row(0)->value;
@@ -60,12 +64,12 @@ class Home extends CI_Controller {
 		$data['allKills'] = $this->db->where('paid',0)->where('reservedBy', NULL)->get('kills');
 		$acceptLosses = $this->db->where('name','acceptLosses')->get('adminSettings');
 		$data['acceptLosses'] = $acceptLosses->row(0)->value;
-		
+
 		$this->load->view('header');
 		$this->load->view('home', $data);
 		$this->load->view('footer');
 	}
-	
+
 	function submitKill(){
 		$low = array('11','12','13','14','15','16','17','18');
 		$med = array('19','20','21','22','23','24','25','26');
@@ -73,18 +77,18 @@ class Home extends CI_Controller {
 		$rigs = array('92','93','94','95','96','97','98','99');
 		$fit = array();
 		$user = $this->vars['user'];
-		$carriers = array('23757','23911','23915','24483');
-		
+		$carriers = array(19720,19722,19724,19726,34339,34341,34343,34345,23757,23911,23915,24483,37604,37605,37606,37607);
+
 		if($this->accLosses == 1){
 			if($this->logged_in && !$this->isBanned){
 				$crestLink = $this->input->post('crestLink', TRUE);
 				$bcastText = $this->input->post('bcast', TRUE);
-				if(strpos($crestLink, 'crest.eveonline') > 0){
-					$crestData = json_decode($this->proxy->http('GET', $crestLink), TRUE);
+				if(strpos($crestLink, 'crest') > 0){
+					$crestData = json_decode($this->curllib->makeRequest('GET', $crestLink), TRUE);
 					if(isset($crestData['exceptionType']) && $crestData['exceptionType'] == 'ForbiddenError'){
 						echo "There was an error, please check your link and try again. If you continue to see this error, please contact an administrator.";
 					} else {
-		
+
 						//Parse the body to extract the data we care about
 						$killID = $crestData['killID'];
 						$killTime = $crestData['killTime'];
@@ -133,15 +137,15 @@ class Home extends CI_Controller {
 																			'damageDone' => $value['damageDone_str']);
 							$i++;
 						}
-						
+
 						$curDate = new DateTime("now");
 						$killTime = str_replace('.','-',$killTime);
-						$killDate = new DateTime($killTime); 
+						$killDate = new DateTime($killTime);
 						$diff = $curDate->diff($killDate);
 						$dayDiff = $diff->format('%a');
 						$aDd = $this->db->where('name', 'maxDayDiff')->get('adminSettings');
 						$allowedDateDiff = $aDd->row(0)->value;
-						
+
 						if($dayDiff <= $allowedDateDiff){
 							$sysChk = $this->db->where('sys_eve_id', $sysID)->get('vwsysconreg');
 							$regID = $sysChk->row(0)->reg_id;
@@ -149,7 +153,7 @@ class Home extends CI_Controller {
 							$secStatus = $sysChk->row(0)->sec;
 							$ptQualified = 0;
 							$overPtCap = 0;
-							
+
 							$ptChk = $this->db->where('regID', $regID)->get("ptRegions");
 							if($ptChk->num_rows() > 0){
 								$ptQualified = 1;
@@ -161,7 +165,7 @@ class Home extends CI_Controller {
 									$overPtCap = 1;
 								}
 							}
-	
+
 							//Lets loop through the items and add them to an array so that we can figure out where they were on the ship.
 							foreach($crestData['victim']['items'] as $item){
 								if(in_array($item['flag'], $high)){
@@ -241,7 +245,7 @@ class Home extends CI_Controller {
 									echo "The kill has been submitted, thank you.";
 								} else {
 									echo "We are currently not reimbursing this ship type. If you feel this is in error, please contact the reimbursement team.";
-								}	
+								}
 							} else {
 								echo "You are not currently in capswarm and thus not eligible for peace time reimbursement for a carrier.";
 							}
@@ -264,7 +268,7 @@ class Home extends CI_Controller {
 		if($this->isReim || $this->isReimDir){
 			$user = $this->vars['user'];
 			$data['reserved'] = $this->db->where('reservedBy', $user)->where('paid', '0')->get("kills");
-			
+
 			$this->load->view('header');
 			$this->load->view('myReserved', $data);
 			$this->load->view('footer');
@@ -274,8 +278,25 @@ class Home extends CI_Controller {
 		if($this->isReim || $this->isReimDir){
 			$user = $this->vars['user'];
 			$numRes = $this->input->post('numRes', TRUE);
-			
-			$rowsToRes = $this->db->where('paid', 0)->where('reservedBy', NULL)->order_by("timestamp",'ASC')->limit($numRes)->get('kills');
+
+			$capGroups = array(1538,547,485,659,30);
+			$cData = $this->db->where_in("groupID", $capGroups)->get("invTypes");
+			$caps = array();
+			foreach ($cData->result() as $row){
+				$caps[] = $row->typeID;
+			}
+
+			if($this->isCapDir){
+				$capsOnly = $this->input->post("capsOnly", TRUE);
+				if($capsOnly == 1){
+					$rowsToRes = $this->db->where("paid", 0)->where("reservedBy", NULL)->where_in("shipID", $caps)->order_by("timestamp", "ASC")->limit($numRes)->get("kills");
+				} else {
+					$rowsToRes = $this->db->where('paid', 0)->where('reservedBy', NULL)->order_by("timestamp",'ASC')->limit($numRes)->get('kills');
+				}
+			} else {
+				$rowsToRes = $this->db->where('paid', 0)->where('reservedBy', NULL)->where_not_in("shipID", $caps)->order_by("timestamp",'ASC')->limit($numRes)->get('kills');
+			}
+
 			if($rowsToRes->num_rows() > 0){
 				foreach($rowsToRes->result() as $row){
 					$dtu = array('reservedBy' => $user, 'reservedDate' => date('Y-m-d H:i:s'));
@@ -291,7 +312,7 @@ class Home extends CI_Controller {
 		if($this->isReim || $this->isReimDir){
 			$killID = $this->input->post('killID', TRUE);
 			$user = $this->vars['user'];
-			
+
 			$dbChk = $this->db->where('killID', $killID)->get('kills');
 			if($dbChk->num_rows() > 0){
 				if($user == $dbChk->row(0)->reservedBy){
@@ -309,27 +330,27 @@ class Home extends CI_Controller {
 			}
 		}
 	}
-	
+
 	function mySubmitted(){
 		if($this->logged_in){
 			$data['submitted'] = $this->db->where('submittedBy',$this->vars['user'])->order_by('timestamp', 'DESC')->get('vwkills');
-			
+
 			$this->load->view('header');
 			$this->load->view('mySubmitted', $data);
 			$this->load->view('footer');
 		}
 	}
-	
+
 	function viewPayouts(){
 		$payouts = $this->db->order_by('shipName', 'ASC')->get('vwpayoutTypeByShip');
 		$data['payoutTypes'] = $this->db->select("DISTINCT(typeName) AS typeName")->get('vwpayoutTypeByShip');
-		
+
 		$payArr = array();
 		foreach($payouts->result() as $row){
 			$payArr[$row->shipName][$row->typeName] = $row->amount;
 		}
 		$data['payouts'] = $payArr;
-		
+
 		$this->load->view('header');
 		$this->load->view('viewPayouts', $data);
 		$this->load->view('footer');
@@ -374,9 +395,9 @@ class Home extends CI_Controller {
 					$payouts = serialize($payoutArr);
 					$dtu = array('availablePayouts' => $payouts);
 					$this->db->where('killID', $killID)->update('kills', $dtu);
-					
+
 					echo "The payouts available have been updated.";
-					
+
 				} else {
 					echo "There are no payout options available for this ship. No changes made.";
 				}

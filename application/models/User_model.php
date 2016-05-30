@@ -17,22 +17,24 @@ class User_model extends CI_Model {
 			return '';
 		}
 	}
-	
+
 	function check_login($user,$password){
 		$auth_method = $this->config->item("AUTH_METHOD");
 		$return = array();
 		$isReim = 0;
 		$isReimDir = 0;
 		$inCapSwarm = 0;
+		$isCapDir = 0;
 		if($auth_method == "CROWD"){
-			$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
+			$headers = array("Authorization: Basic " . base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type: application/xml', 'Accept: application/xml');
+			//$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
 			$xmlBody = '<?xml version="1.0" encoding="UTF-8"?>
 								<password>
 	  								<value>@password@</value>
 								</password>';
 			$requestBody = str_replace('@password@',$password, $xmlBody);
-			$crowdData = $this->proxy->http('POST', $this->crowdUrl."authentication?username=" . urlencode($user), array('' => $requestBody));
-			
+			$crowdData = $this->curllib->makeRequest('POST', $this->crowdUrl."authentication?username=" . urlencode($user), $requestBody, $headers);
+
 			if(strpos($crowdData, '<error>') > 0){
 				$return['err'] = "BAD USER";
 				$return['errReason'] = $this->get_val($crowdData, '<reason>','</reason>');
@@ -48,13 +50,19 @@ class User_model extends CI_Model {
 				if(strpos($groupData, '[SIG] CapSwarm') !== FALSE){
 					$inCapSwarm = 1;
 				}
+				if(strpos($groupData, '[A] Directors of CapSwarm') !== FALSE){
+					$isCapDir = 1;
+					$isReimDir = 1;
+				}
 				if($user == 'kilgarth' || $user == 'innominate'){
 					$isReim = 1;
 					$isReimDir = 1;
+					$isCapDir = 1;
 				}
 				$return['isReim'] = $isReim;
 				$return['isReimDir'] = $isReimDir;
 				$return['inCapSwarm'] = $inCapSwarm;
+				$return['isCapDir'] = $isCapDir;
 				$return['err'] = FALSE;
 			}
 		} elseif($auth_method == "INTERNAL"){
@@ -73,10 +81,15 @@ class User_model extends CI_Model {
 					if(in_array(3, $gids)){
 						$inCapSwarm = 1;
 					}
+					if(in_array(4, $gids)){
+						$isCapDir = 1;
+						$isReimDir = 1;
+					}
 				}
 				$return['isReim'] = $isReim;
 				$return['isReimDir'] = $isReimDir;
 				$return['inCapSwarm'] = $inCapSwarm;
+				$return['isCapDir'] = $isCapDir;
 				$return['err'] = FALSE;
 			} else {
 				$return['err'] = "BAD USER";
@@ -88,16 +101,17 @@ class User_model extends CI_Model {
 			$return['errReason'] = "NO AUTH METHOD SET";
 			$return['errMessage'] = "NO AUTH METHOD SET";
 		}
-			
+
 		return $return;
 	}
-	
+
 	function getGroups($user){
-		$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
-		$groupData = $this->proxy->http('GET', $this->crowdUrl."user/group/direct?username=".urlencode($user));
+		$headers = array("Authorization: Basic " . base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type: application/xml', 'Accept: application/xml');
+		//$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
+		$groupData = $this->curllib->makeRequest('GET', $this->crowdUrl."user/group/direct?username=".urlencode($user),'',$headers);
 		return $groupData;
 	}
-	
+
 	function registerUser($user, $password) {
 		$auth_method = $this->config->item("AUTH_METHOD");
 		if($auth_method == "INTERNAL"){

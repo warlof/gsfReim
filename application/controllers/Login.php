@@ -7,10 +7,10 @@ class Login extends CI_Controller {
 	 *
 	 * Maps to the following URL
 	 * 		http://example.com/index.php/welcome
-	 *	- or -  
+	 *	- or -
 	 * 		http://example.com/index.php/welcome/index
 	 *	- or -
-	 * Since this controller is set as the default controller in 
+	 * Since this controller is set as the default controller in
 	 * config/routes.php, it's displayed at http://example.com/
 	 *
 	 * So any other public methods not prefixed with an underscore will
@@ -20,7 +20,7 @@ class Login extends CI_Controller {
 	public function index()
 	{
 		$this->load->model('User_model');
-		
+
 		$this->form_validation->set_rules('user', 'User', 'trim|required|xss_clean|strtolower');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean');
 		if($this->form_validation->run() == FALSE) {
@@ -31,7 +31,7 @@ class Login extends CI_Controller {
 			$user = $this->input->post('user');
 			$password = $this->input->post('password');
 			$userData = $this->User_model->check_login($user,$password);
-			
+
 			if ($userData['err'] == FALSE) {
 				$vars = array();
 				$banChk = $this->db->where('banEnd >', date('Y-m-d H:i:s'))->where('userName', $user)->get('bannedUsers');
@@ -49,9 +49,10 @@ class Login extends CI_Controller {
 				$vars['isReim'] = $userData['isReim'];
 				$vars['isReimDir'] = $userData['isReimDir'];
 				$vars['inCapSwarm'] = $userData['inCapSwarm'];
+				$vars['isCapDir'] = $userData['isCapDir'];
 
 				$this->session->set_userdata('vars',$vars);
-				
+
 				$ldata = array(	'user'	=> $this->session->userdata('vars')['user'],
 								'type'	=> 'LOGIN',
 								'data'	=> 'IP : ' . $this->input->ip_address());
@@ -69,15 +70,15 @@ class Login extends CI_Controller {
 		$this->session->sess_destroy();
 		redirect('home');
 	}
-	
+
 	function register(){
 		if($this->config->item("ALLOW_REGISTRATION")){
 			$this->load->model('User_model');
 			$user = $this->input->post("user", TRUE);
 			$password = $this->input->post('password', TRUE);
-			
+
 			$ret = $this->User_model->registerUser($user, $password);
-			
+
 			if($ret['message']){
 				echo "Account successfully created, you may now login.";
 			} else {
@@ -85,6 +86,6 @@ class Login extends CI_Controller {
 			}
 		} else {
 			echo "You are fucking stupid.";
-		}	
+		}
 	}
 }
