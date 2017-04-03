@@ -691,7 +691,39 @@ class Admin extends CI_Controller {
 			$this->load->view('footer');			
 		}
 	}
-}
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+	function viewGroupBans(){
+		if($this->session->userdata('vars')['isReimDir']){
+			$data['groupBans'] = $this->db->where('active', '1')->get("bannedGroups");
+			$this->load->view("header");
+			$this->load->view("admin/viewGroupBans", $data);
+			$this->load->view("footer");
+		}
+	}
+
+	function unbanGroup() {
+		$groupID = $this->input->post("banID", TRUE);
+		$this->db->where('id', $groupID)->update("bannedGroups", array("active" => 0, "removedBy" => $this->session->userdata('vars')['user'], "removedOn" => date('Y-m-d h:i:s')));
+	}
+
+	function banGroup() {
+		$groupName = $this->input->post("groupName");
+		$reason = $this->input->post("reason");
+		$bannedBy = $this->session->userdata('vars')['user'];
+
+		$chk = $this->db->where("groupName", $groupName)->where('active', 1)->get("bannedGroups");
+		if($chk->num_rows() > 0){
+			echo "This group is already banned, you're fucking stupid.";
+		} else {
+			$dti = array(
+				"groupName"		=> $groupName,
+				"reason"		=> $reason,
+				"bannedBy"		=> $bannedBy,
+				"active"		=> 1);
+			$this->db->insert("bannedGroups", $dti);
+
+			echo "Done";
+		}
+
+	}
+}

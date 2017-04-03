@@ -2,13 +2,17 @@
 	function resBlock(){
 		var nREle = document.getElementById("numRes");
 		var numRes = nREle.options[nREle.selectedIndex].value;
-		var cOnly = document.getElementById("capsOnly");
-		if cOnly.checked {
-			capsOnly = 1;
-		} else {
-			capsOnly = 0;
-		}
 
+		<?php if($this->session->userdata("vars")['isCapDir'] == 0){ ?>
+			capsOnly = 0;
+		<?php } else { ?>
+			var cOnly = document.getElementById("capsOnly");
+			if(cOnly.checked){
+				capsOnly = 1;
+			} else {
+				capsOnly = 0;
+			}
+		<?php } ?>
 //		alert(numRes);
 		$.ajax({
 			url: "<?php echo base_url('home/claimBlock'); ?>",
@@ -69,7 +73,7 @@
 							<th></th>
 						</tr>
 					</thead>
-					<tbody>
+			 		<tbody>
 						<?php foreach($reserved->result() as $row){ ?>
 							<tr>
 								<td><?php echo $row->victimName; ?></td>

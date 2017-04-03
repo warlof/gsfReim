@@ -406,6 +406,12 @@ class Home extends CI_Controller {
 			}
 		}
 	}
+
+	function ssh(){
+		print "<pre>";
+		print_r($this->session->userdata);
+		print "</pre>";
+	}
 }
 
 /* End of file welcome.php */

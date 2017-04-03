@@ -1,3 +1,11 @@
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css">
+<script>
+	$(document).ready(function() {
+		$('#deniedTable').DataTable();
+	});
+</script>
 <script>
 	function showFit(killID){
 		var id = "#"+killID;
@@ -33,7 +41,7 @@
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
 			<?php if($denied->num_rows() > 0){ ?>
-				<table class="table table-condensed table-striped">
+				<table class="table table-condensed table-striped" id="deniedTable">
 					<thead>
 						<tr>
 							<th></th>
@@ -62,7 +70,7 @@
 										<pre><?php echo $row->bcast; ?></pre>
 									</div>
 								<?php } else { ?>
-									<td>No Broadcast</td>									
+									<td>No Broadcast</td>
 								<?php } ?>
 								<td id="vicName-<?php echo $row->killID; ?>"><?php echo $row->victimName; ?></td>
 								<td><?php echo $row->corpName; ?></td>

@@ -21,6 +21,17 @@ class Login extends CI_Controller {
 	{
 		$this->load->model('User_model');
 
+		$vars = array();
+		$vars['err'] = FALSE;
+		$vars['logged_in'] = FALSE;
+		$vars['user'] = "";
+		$vars['isReim'] = 0;
+		$vars['isReimDir'] = 0;
+		$vars['inCapSwarm'] = 0;
+		$vars['isCapDir'] = 0;
+		$vars['isBanned'] = 0;
+		$vars['groupData'] = array();
+
 		$this->form_validation->set_rules('user', 'User', 'trim|required|xss_clean|strtolower');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean');
 		if($this->form_validation->run() == FALSE) {
@@ -31,9 +42,11 @@ class Login extends CI_Controller {
 			$user = $this->input->post('user');
 			$password = $this->input->post('password');
 			$userData = $this->User_model->check_login($user,$password);
+			$udLog = json_encode($userData);
+			log_message("debug", "Attempting login for $user: $udLog");
 
 			if ($userData['err'] == FALSE) {
-				$vars = array();
+
 				$banChk = $this->db->where('banEnd >', date('Y-m-d H:i:s'))->where('userName', $user)->get('bannedUsers');
 				if($banChk->num_rows() > 0){
 					$vars['isBanned'] = 1;
@@ -50,10 +63,11 @@ class Login extends CI_Controller {
 				$vars['isReimDir'] = $userData['isReimDir'];
 				$vars['inCapSwarm'] = $userData['inCapSwarm'];
 				$vars['isCapDir'] = $userData['isCapDir'];
+				if(isset($userData['groupData'])){
+					$vars['groupData'] = $userData['groupData'];
+				}
 
-				$this->session->set_userdata('vars',$vars);
-
-				$ldata = array(	'user'	=> $this->session->userdata('vars')['user'],
+				$ldata = array(	'user'	=> $user,
 								'type'	=> 'LOGIN',
 								'data'	=> 'IP : ' . $this->input->ip_address());
 				$this->db->insert('ulog', $ldata);
@@ -61,8 +75,12 @@ class Login extends CI_Controller {
 			} else {
 				$dti = array('user' => $user, 'data' => "FAILED LOGIN ATTEMPT.<br>REASON: " . $userData['errReason'] . "<br>MESSAGE: " . $userData['errMessage'], 'type' => 'FAILED LOGIN');
 				$this->db->insert('ulog', $dti);
+				if($userData['err'] == 'GROUPBAN'){
+					$vars = array_merge($vars,$userData);
+				}
 			}
 		}
+		$this->session->set_userdata('vars',$vars);
 		redirect('home');
 	}
 	public function logout()

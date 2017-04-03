@@ -20,7 +20,7 @@
 		.ui-datepicker{z-index:115111 !important;}
 		.ui-autocomplete{z-index:115111 !important;}
 	</style>
-	
+
 </head>
 
 <script type="text/javascript">
@@ -36,13 +36,13 @@ $(document).ready(function() {
 		var skClone1 = skClone.clone();
 		$("#submitKillBody").replaceWith(skClone1);
 	})
-	
+
 });
 
 	function submitKill() {
 		var crestLink = document.getElementById("crestLink").value;
 		var bcast = document.getElementById("bcast").value;
-		
+
 		if(crestLink==null || crestLink==""){
 			alert("You must enter a CREST Link");
 		} else {
@@ -105,12 +105,12 @@ if($vars['isReimDir'] == 1){?>
 				changeYear: true
 			});
 		});
-		
+
 		function banUser() {
 			var userName = document.getElementById("banUserName").value;
 			var reason = document.getElementById("banUserReason").value;
 			var endDate = document.getElementById("banUserEndDate").value;
-			
+
 //			alert(userName+" | "+reason+" | "+endDate);
 			if(userName=='' || reason=='' || endDate==''){
 				alert("You must specify a user, reason, and end date.");
@@ -140,10 +140,11 @@ if($vars['isReimDir'] == 1){?>
 	      </button>
 	      <a class="navbar-brand" href="<?php echo base_url('home'); ?>">GSF Affordable Care</a>
 	    </div>
-	
+
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 	      <ul class="nav navbar-nav">
+			  <li><a href="https://goonfleet.com">Back to Forums</a></li>
 	        <li><?php echo anchor('home', 'Home'); ?></a></li>
 	        <li><?php echo anchor("home/viewPayouts", 'View Payouts'); ?></li>
 	        <?php if($vars['logged_in'] && $vars['isBanned'] == 0){ ?>
@@ -165,6 +166,7 @@ if($vars['isReimDir'] == 1){?>
 			        		<li><?php echo anchor('admin/viewBanned', 'View Banned Users'); ?></li>
 			        		<li><?php echo anchor('admin/viewSettings', 'Preferences'); ?></li>
 			        		<li><?php echo anchor('admin/viewLog', 'View Logs'); ?></li>
+			        		<li><?php echo anchor('admin/viewGroupBans', "Group Bans"); ?></li>
 			        		<?php if($this->config->item('AUTH_METHOD') == "INTERNAL"){ ?>
 			        			<li><?php echo anchor('admin/userMgmt', "User Management"); ?></li>
 			        		<?php } ?>
@@ -176,7 +178,7 @@ if($vars['isReimDir'] == 1){?>
 			        <li><a href="#" id="banUserShow">Ban User</a></li>
 			    <?php }
 					} ?>
-		      
+
 		     <?php } ?>
 		     </ul>
 			<ul class="navbar-form navbar-right">
@@ -185,7 +187,7 @@ if($vars['isReimDir'] == 1){?>
 	    			<div class="form-group">
 						<input class="form-control" type="text" id="user" name="user" placeholder="User Name">
 					</div>
-	    			<div class="form-group">			
+	    			<div class="form-group">
 						<input class="form-control" type="password" id="password" name="password" placeholder="Password">
 					</div>
 					<button type="submit" class="btn btn-primary">Login</button>
@@ -194,7 +196,7 @@ if($vars['isReimDir'] == 1){?>
 						<button type="button" class="btn btn-success" id="registerAccount" value="Register">Register</button>
 					<?php } ?>
 					</form>
-					
+
 				<?php } else { ?>
 					<span>Welcome, <?php echo $vars['user']; ?></span>
 					<?php echo anchor('login/logout','Logout', 'class="btn btn-danger"');
