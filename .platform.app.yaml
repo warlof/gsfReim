@@ -15,7 +15,7 @@ runtime:
 web:
  locations:
   '/':
-    root: '/'
+    root: ''
     passthru: '/index.php'
 
 disk: 2048
