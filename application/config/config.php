@@ -1,6 +1,16 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+$relationships = getenv("PLATFORM_RELATIONSHIPS");
+if(!$relationships){
+	$relArray["redis"][0]['host'] = "localhost";
+	$relArray["redis"][0]['port'] = 6370;
+} else {
+	$relArray = json_decode(base64_decode($relationships), TRUE);
+}
+
+$encKey = getenv("PLATFORM_PROJECT_ENTROPY") ? getenv("PLATFORM_PROJECT_ENTROPY") : uniqid("",TRUE);
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
@@ -23,7 +33,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'https://reim.kilgarth.net';
+$host = getenv("HTTP_HOST");
+$config['base_url'] = 'https://'.$host;
 
 /*
  * AUTH_METHOD
@@ -326,7 +337,7 @@ $config['cache_query_string'] = FALSE;
 | http://codeigniter.com/user_guide/libraries/encryption.html
 |
 */
-$config['encryption_key'] = '34rt6yuihjokmlrefdcj657yuh9lk43w5trgshdng';
+$config['encryption_key'] = $encKey;
 
 /*
 |--------------------------------------------------------------------------
@@ -379,11 +390,11 @@ $config['encryption_key'] = '34rt6yuihjokmlrefdcj657yuh9lk43w5trgshdng';
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
 */
-$config['sess_driver'] = 'files';
+
+$config['sess_driver'] = 'redis';
 $config['sess_cookie_name'] = 'ci_session';
-$config['sess_save_path'] = '/var/www/reim1/sessions/';
+$config['sess_save_path'] = 'tcp://'.$relArray["redis"][0]["host"].":".$relArray["redis"][0]["port"];
 $config['sess_expiration'] = 7200;
-$config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
 $config['sess_regenerate_destroy'] = FALSE;

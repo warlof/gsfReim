@@ -1,6 +1,15 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+$relationships = getenv("PLATFORM_RELATIONSHIPS");
+if(!$relationships){
+	$db['host'] = "localhost";
+	$db['username'] = "";
+	$db['password'] = "";
+	$db['path'] = "gsfReim";
+} else {
+	$relArray = json_decode(base64_decode($relationships), TRUE);
+	$db = $relArray["database"][0];
+}
 /*
 | -------------------------------------------------------------------
 | DATABASE CONNECTIVITY SETTINGS
@@ -75,10 +84,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'reimbursement',
-	'password' => 'gsfReim123',
-	'database' => 'reimbursement',
+	'hostname' => $db["host"],
+	'username' => $db["username"],
+	'password' => $db["password"],
+	'database' => $db["path"],
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
