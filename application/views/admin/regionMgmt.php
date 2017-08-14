@@ -40,38 +40,42 @@ $(document).ready(function() {
 	}
 </script>
 <div class="col-md-12">
-	<div class="row">
-		<div class="col-md-4 col-md-offset-1 well well-sm">
-			<h3>Add a Region</h3>
-			<div class="input-group">
-				<span class="input-group-addon">Region Name</span>
-				<input name="regName" id="regName" class="form-control" type="text"></input>
-				<span class="input-group-btn"><button type="button" class="btn btn-success" value="Add Region" onclick="addRegion()">Add Region</button></span>
+	<div class="row justify-content-md-center">
+		<div class="col-md-7">
+			<div class="row justify-content-between">
+				<div class="col-md-4">
+					<h3>Add a Region</h3>
+					<div class="input-group">
+						<span class="input-group-addon">Region Name</span>
+						<input name="regName" id="regName" class="form-control" type="text"></input>
+						<span class="input-group-btn"><button type="button" class="btn btn-outline-success" value="Add Region" onclick="addRegion()">Add Region</button></span>
+					</div>
+					<br>
+				</div>
+				<div class="col-md-4">
+					<h3>Current Peacetime Regions</h3>
+					<?php if($regions->num_rows() > 0){ ?>
+						<table class="table table-sm table-striped">
+							<thead>
+								<tr>
+									<th>Region</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach($regions->result() as $row){ ?>
+									<tr>
+										<td><?php echo $row->regName; ?></td>
+										<td><button type="button" class="btn btn-sm btn-outline-danger" onclick="delRegion(<?php echo $row->regID; ?>)">Remove</button></td>
+									</tr>
+								<?php } ?>
+							</tbody>
+						</table>
+					<?php } else { ?>
+						<h3>No Peacetime regions have been added yet.</h3>
+					<?php }?>
+				</div>
 			</div>
-			<br>
-		</div>
-		<div class="col-md-3 col-md-offset-2">
-			<h3>Current Peacetime Regions</h3>
-			<?php if($regions->num_rows() > 0){ ?>
-				<table class="table table-condensed table-striped">
-					<thead>
-						<tr>
-							<th>Region</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php foreach($regions->result() as $row){ ?>
-							<tr>
-								<td><?php echo $row->regName; ?></td>
-								<td><button type="button" class="btn btn-xs btn-danger" onclick="delRegion(<?php echo $row->regID; ?>)">Remove</button></td>
-							</tr>
-						<?php } ?>
-					</tbody>
-				</table>
-			<?php } else { ?>
-				<h3>No Peacetime regions have been added yet.</h3>
-			<?php }?>
 		</div>
 	</div>
 </div>

@@ -84,7 +84,8 @@ class Home extends CI_Controller {
 				$crestLink = $this->input->post('crestLink', TRUE);
 				$bcastText = $this->input->post('bcast', TRUE);
 				if(strpos($crestLink, 'crest') > 0){
-					$crestData = json_decode($this->curllib->makeRequest('GET', $crestLink), TRUE);
+					$cD = $this->curllib->makeRequest('GET', $crestLink);
+					$crestData = json_decode($cD, TRUE);
 					if(isset($crestData['exceptionType']) && $crestData['exceptionType'] == 'ForbiddenError'){
 						echo "There was an error, please check your link and try again. If you continue to see this error, please contact an administrator.";
 					} else {
@@ -105,38 +106,47 @@ class Home extends CI_Controller {
 						$attackers = $crestData["attackers"];
 						$attackerArr = array();
 						$i = 0;
-						foreach($attackers as $key => $value){
-							$alliance = '';
-							if(isset($value['alliance'])){
-								$alliance = $value['alliance']['name'];
+						if(count($attackers) > 0){
+							foreach($attackers as $key => $value){
+								$alliance = '';
+								if(isset($value['alliance'])){
+									$alliance = $value['alliance']['name'];
+								}
+								if(isset($value['shipType'])){
+									$shiptype = $value['shipType']['name'];
+								} else {
+									$shiptype = "Unknown";
+								}
+								if(isset($value['character'])){
+										$character = $value['character']['name'];
+								} else {
+									$character = 'Unknown ' . $i;
+								}
+								if(isset($value['weaponType'])){
+									$weaponType = $value['weaponType']['name'];
+								} else {
+									$weaponType = "Unknown";
+								}
+								if(isset($value['corporation'])){
+									$corporation = $value['corporation']['name'];
+								} else {
+									$corporation = "Unknown Corporation";
+								}
+								$attackerArr[$character] = array('corporation' => $corporation,
+																				'alliance' => $alliance,
+																				'shipType' => $shiptype,
+																				'weaponType' => $weaponType,
+																				'damageDone' => $value['damageDone_str']);
+								$i++;
 							}
-							if(isset($value['shipType'])){
-								$shiptype = $value['shipType']['name'];
-							} else {
-								$shiptype = "Unknown";
-							}
-							if(isset($value['character'])){
-									$character = $value['character']['name'];
-							} else {
-								$character = 'Unknown ' . $i;
-							}
-							if(isset($value['weaponType'])){
-								$weaponType = $value['weaponType']['name'];
-							} else {
-								$weaponType = "Unknown";
-							}
-							if(isset($value['corporation'])){
-								$corporation = $value['corporation']['name'];
-							} else {
-								$corporation = "Unknown Corporation";
-							}
-							$attackerArr[$character] = array('corporation' => $corporation,
-																			'alliance' => $alliance,
-																			'shipType' => $shiptype,
-																			'weaponType' => $weaponType,
-																			'damageDone' => $value['damageDone_str']);
-							$i++;
+						} else {
+							$errid = uniqid();
+							echo "Something went wrong and it was probably CCP's fault. Try again later. If it still doesn't work, give this to kilgarth: " . count($attackers) . " | ".$errid;
+							$fn = $errid.".txt";
+							file_put_contents($fn, $cD);
+							die();
 						}
+
 
 						$curDate = new DateTime("now");
 						$killTime = str_replace('.','-',$killTime);
@@ -319,6 +329,7 @@ class Home extends CI_Controller {
 					if($dbChk->row(0)->paid == 0){
 						$dtu = array('reservedBy' => NULL);
 						$this->db->where('killID', $killID)->update('kills', $dtu);
+						echo "The kill has been released.";
 					} else {
 						echo "You cannot release a loss that has already been paid or denied.";
 					}
@@ -347,7 +358,7 @@ class Home extends CI_Controller {
 
 		$payArr = array();
 		foreach($payouts->result() as $row){
-			$payArr[$row->shipName][$row->typeName] = $row->amount;
+			$payArr[$row->shipName][$row->typeName] = array("payout" => $row->amount, "insProfit" => $row->insProfit, "totalReim" => $row->totalReim);
 		}
 		$data['payouts'] = $payArr;
 
@@ -406,13 +417,4 @@ class Home extends CI_Controller {
 			}
 		}
 	}
-
-	function ssh(){
-		print "<pre>";
-		print_r($this->session->userdata);
-		print "</pre>";
-	}
 }
-
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */

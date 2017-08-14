@@ -32,9 +32,9 @@
 	}
 </script>
 <div class="col-md-12">
-	<div class="row">
-		<div class="col-md-4 col-md-offset-1">
-			<table class="table table-condensed table-striped">
+	<div class="row justify-content-md-center">
+		<div class="col-md-4">
+			<table class="table table-sm table-striped">
 				<thead>
 					<tr>
 						<th>Name</th>
@@ -47,7 +47,7 @@
 						<tr>
 							<td><?php echo $row->name; ?></td>
 							<td><?php echo $row->value; ?></td>
-							<td><button type="button" class="btn btn-xs btn-info" onclick="getDetails(<?php echo $row->id; ?>)" value="Edit">Edit</button></td>
+							<td><button type="button" class="btn btn-sm btn-outline-info" onclick="getDetails(<?php echo $row->id; ?>)" value="Edit">Edit</button></td>
 						</tr>
 					<?php } ?>
 				</tbody>
@@ -56,7 +56,7 @@
 	</div>
 </div>
 <div class="modal fade" id="settingDetail" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" style="width: 50%">
+  <div class="modal-dialog modal-lg" style="width: 50%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

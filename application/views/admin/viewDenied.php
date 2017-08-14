@@ -1,6 +1,6 @@
-<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css">
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap4.min.css">
 <script>
 	$(document).ready(function() {
 		$('#deniedTable').DataTable();
@@ -38,10 +38,10 @@
 </script>
 <?php } ?>
 <div class="col-md-12">
-	<div class="row">
-		<div class="col-md-10 col-md-offset-1">
+	<div class="row justify-content-md-center">
+		<div class="col-md-10">
 			<?php if($denied->num_rows() > 0){ ?>
-				<table class="table table-condensed table-striped" id="deniedTable">
+				<table class="table table-sm table-striped" id="deniedTable">
 					<thead>
 						<tr>
 							<th></th>
@@ -55,7 +55,7 @@
 							<th>Denied By</th>
 							<th>Denied Reason</th>
 							<th>Denied On</th>
-							<?php if($this->session->userdata('isReimDir') == 1){ ?>
+							<?php if($this->session->userdata('vars')['isReimDir'] == 1){ ?>
 							<th></th>
 							<?php } ?>
 						</tr>
@@ -63,9 +63,9 @@
 					<tbody>
 						<?php foreach($denied->result() as $row){ ?>
 							<tr>
-								<td><button type="button" class="btn btn-xs btn-info" onclick="showFit(<?php echo $row->killID; ?>)">Show Fit</button></td>
+								<td><button type="button" class="btn btn-sm btn-outline-info" onclick="showFit(<?php echo $row->killID; ?>)">Show Fit</button></td>
 								<?php if($row->bcast <> ''){ ?>
-									<td><button type="button" class="btn btn-xs btn-info" onclick="showBroadcast(<?php echo $row->killID; ?>)">Show Broadcast</button></td>
+									<td><button type="button" class="btn btn-sm btn-outline-info" onclick="showBroadcast(<?php echo $row->killID; ?>)">Show Broadcast</button></td>
 									<div id="<?php echo $row->killID . "bcast"; ?>" style="display: none;">
 										<pre><?php echo $row->bcast; ?></pre>
 									</div>
@@ -82,7 +82,7 @@
 								<td><?php echo $row->reason; ?></td>
 								<td><?php echo $row->deniedOn; ?></td>
 								<?php if($this->session->userdata('vars')['isReimDir'] == 1){ ?>
-								<td><button type="button" class="btn btn-warning btn-xs" value="Undeny" onclick="undeny(<?php echo $row->killID; ?>)">Undeny</button></td>
+								<td><button type="button" class="btn btn-outline-warning btn-sm" value="Undeny" onclick="undeny(<?php echo $row->killID; ?>)">Undeny</button></td>
 								<?php } ?>
 							</tr>
 							<div id="<?php echo $row->killID; ?>" style="display: none;">
@@ -150,7 +150,7 @@
 	</div>
 </div>
 <div class="modal fade" id="fitting" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" style="width: 50%">
+  <div class="modal-dialog modal-lg" style="width: 50%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

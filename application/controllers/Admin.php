@@ -423,7 +423,7 @@ class Admin extends CI_Controller {
 		      		<textarea class="form-control" cols="10" id="payoutNotes"></textarea>
 		      	</div>
 		      	<br>
-		      	<button type="button" class="btn btn-success" value="Paid" onclick="payOut(<?php echo $killID; ?>)">Paid</button>
+		      	<button type="button" class="btn btn-outline-success" value="Paid" onclick="payOut(<?php echo $killID; ?>)">Paid</button>
 	      	<?php
 			} else {
 				echo "I could not find the kill specified, please try again. If the problem persists, please contact an administrator.";
@@ -621,7 +621,7 @@ class Admin extends CI_Controller {
 	}
 	function viewDenied(){
 		if($this->isReimDir || $this->isReim){
-			$data['denied'] = $this->db->get('vwdeniedPayments');
+			$data['denied'] = $this->db->order_by("timestamp", "DESC")->limit(500)->get('vwdeniedPayments');
 			
 			$this->load->view('header');
 			$this->load->view('admin/viewDenied', $data);

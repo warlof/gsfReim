@@ -1,5 +1,6 @@
-<link rel="stylesheet" type="text/css" href="/assets/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="/assets/js/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap4.min.css">
 <script>
 	$(document).ready(function() {
 		$('#logTable').DataTable({
@@ -9,10 +10,10 @@
 	});
 </script>
 <div class="col-md-12">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-2">
+	<div class="row justify-content-md-center">
+		<div class="col-md-8">
 			<?php if($logdata->num_rows() > 0){ ?>
-				<table calss="table table-condensed table-striped" id="logTable">
+				<table class="table table-sm table-striped" id="logTable">
 					<thead>
 						<tr>
 							<th>User</th>

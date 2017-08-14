@@ -36,8 +36,8 @@
 
 </script>
 <div class="col-md-12">
-	<div class="row">
-		<div class="col-md-8 col-md-offset-1">
+	<div class="row justify-content-md-center">
+		<div class="col-md-4">
 			<h4>Add New Ban</h4>
 			<div class="input-group">
 				<span class="input-group-addon">Group Name</span>
@@ -49,30 +49,31 @@
 				<textarea class="form-control" id="banReason" rows="5"></textarea>
 			</div>
 			<br>
-			<button class="btn btn-success" type="button" onclick="banGroup()" value="Ban">Ban</button>
+			<button class="btn btn-outline-success" type="button" onclick="banGroup()" value="Ban">Ban</button>
 		</div>
 	</div>
 	<hr>
-	<div class="row">
-		<div class="col-md-8 col-md-offset-1">
-			<?php if($groupBans->num_rows() > 0){ ?>
-				<h3>Currently Banned Groups</h3>
-				<?php foreach($groupBans->result() as $row){ ?>
-					<div class="row">
-						<div class="well well-sm">
-							<p>Group Name: <b><?php echo $row->groupName; ?></b> | <button type="button" class="btn btn-xs btn-success" value="Unban" onclick="unBan(<?php echo $row->id; ?>)">Unban</button></p>
-							<p>Banned On: <b><?php echo $row->banDate; ?></b></p>
-							<p>Banned By: <b><?php echo $row->bannedBy; ?></b></p>
-							<hr>
-							<p>Reason:</p>
-							<pre><?php echo $row->reason; ?></pre>
+	<?php if($groupBans->num_rows() > 0){ ?>
+		<div class="row justify-content-md-center">
+			<h3>Currently Banned Groups</h3>
+		</div>
+		<div class="row justify-content-md-center">
+			<?php foreach($groupBans->result() as $row){ ?>
+				<div class="col-md-8">
+					<div class="card">
+						<div class="card-header">
+							<?php echo $row->groupName; ?> <button type="button" class="btn btn-sm btn-outline-success" value="Unban" onclick="unBan(<?php echo $row->id; ?>)">Unban</button>
+						</div>
+						<span class="card-text" style="padding: .75rem 1.25rem;"><?php echo $row->reason; ?></span>
+						<div class="card-footer">
+							<?php printf("Banned on <strong>%s</strong> by <strong>%s</strong>", $row->banDate, $row->bannedBy); ?>
 						</div>
 					</div>
-				<?php } ?>
-			<?php } else { ?>
-				<h4>There are no banned groups currently.</h4>
-			<?php }?>
+				</div>
+			<?php } ?>
 		</div>
-	</div>
+	<?php } else { ?>
+		<h4>There are no banned groups currently.</h4>
+	<?php }?>
 </div>
 

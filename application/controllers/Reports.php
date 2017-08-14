@@ -7,10 +7,10 @@ class Reports extends CI_Controller {
 	 *
 	 * Maps to the following URL
 	 * 		http://example.com/index.php/welcome
-	 *	- or -  
+	 *	- or -
 	 * 		http://example.com/index.php/welcome/index
 	 *	- or -
-	 * Since this controller is set as the default controller in 
+	 * Since this controller is set as the default controller in
 	 * config/routes.php, it's displayed at http://example.com/
 	 *
 	 * So any other public methods not prefixed with an underscore will
@@ -27,7 +27,7 @@ class Reports extends CI_Controller {
 			redirect('notauth');
 		}
 	}
-	
+
 	function index(){
 		if(isset($this->vars['repDateFil'])){
 			$date = $this->vars['repDateFil'];
@@ -37,13 +37,14 @@ class Reports extends CI_Controller {
 		$dateStr = strtotime($date);
 		$data['date'] = date('F, Y', $dateStr);
 		$reimCap = $this->db->where('name','ptCap')->get('adminSettings');
-		$ptPayoutId = $this->db->where('name', 'ptPayoutId')->get('adminSettings');
+		$ptPayoutId = $this->db->where('name', 'ptCapPayoutIds')->get('adminSettings');
 		if($ptPayoutId->num_rows() > 0){
 			$ptPID = $ptPayoutId->row(0)->value;
 		} else {
-			$this->db->insert("adminSettings", array('name' => 'ptPayoutId', 'value' => 1));
+			$this->db->insert("adminSettings", array('name' => 'ptCapPayoutIds', 'value' => 1));
 			$ptPID = 1;
 		}
+		$ptPID = explode(",",$ptPID);
 		$data['ptCap'] = $reimCap->row(0)->value;
 		$data['byUser'] = $this->db->select('k.submittedBy, COUNT(*) AS count, SUM(pc.payoutAmount) AS total')
 									->from('kills k')
@@ -82,7 +83,7 @@ class Reports extends CI_Controller {
 									->from('kills k')
 									->join('paymentsCompleted pc', 'pc.killID = k.killID', 'left')
 									->where('k.paid','1')
-									->where('pc.payoutType', $ptPID)
+									->where_in('pc.payoutType', $ptPID)
 									->like('killTime', $date, 'after')
 									->group_by('submittedBy')
 									->order_by('submittedBy')
@@ -111,5 +112,27 @@ class Reports extends CI_Controller {
 		$vars['repDateFil'] = $date;
 		$this->session->unset_userdata('vars');
 		$this->session->set_userdata('vars',$vars);
+	}
+
+	function insurance() {
+		$insData = $this->db->select("it.typeName,
+		                             i.basicCost,
+		                             i.basicPayout,
+		                             i.standardCost, 
+		                             i.standardPayout,
+		                             i.bronzeCost,
+		                             i.bronzePayout,
+		                             i.silverCost,
+		                             i.silverPayout,
+		                             i.goldCost,
+		                             i.goldPayout,
+		                             i.platinumCost,
+		                             i.platinumPayout")
+							->from("shipInsurance i")
+							->join("invTypes it", "it.typeID = i.typeID")
+							->get();
+		$this->load->view("header");
+		$this->load->view("insurance", array("insData" => $insData));
+		$this->load->view("footer");
 	}
 }

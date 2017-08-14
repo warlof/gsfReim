@@ -8,4 +8,4 @@
 	<input type="text" class="form-control" value="<?php echo $details->row(0)->value; ?>" id="newSettingValue"></input>
 </div>
 <br>
-<button type="button" class="btn btn-success" onclick="saveSetting(<?php echo $details->row(0)->id; ?>)" value="Save">Save</button>
+<button type="button" class="btn btn-outline-success" onclick="saveSetting(<?php echo $details->row(0)->id; ?>)" value="Save">Save</button>

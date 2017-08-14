@@ -11,22 +11,35 @@
 		});
 	}
 </script>
-<div class="col-md-8 col-md-offset-1">
-	<?php if($bannedUsers->num_rows(0) > 0){ ?>
-		<h3>Currently Banned Users</h3>
-		<?php foreach($bannedUsers->result() as $row){ ?>
-			<div class="row">
-				<div class="well well-sm">
-					<p>User Name: <b><?php echo $row->userName; ?></b> | <button type="button" class="btn btn-xs btn-success" value="Unban" onclick="unBan(<?php echo $row->id; ?>)">Unban</button></p>
-					<p>Banned On: <b><?php echo $row->banStart; ?></b></p>
-					<p>Ban Expires On: <b><?php echo $row->banEnd; ?></b></p>
-					<hr>
-					<p>Reason:</p>
-					<pre><?php echo $row->reason; ?></pre>
+<div class="col-md-12">
+	<div class="row justify-content-md-center">
+		<div class="col-md-10">
+			<?php if($bannedUsers->num_rows(0) > 0){ ?>
+				<div class="row justify-content-md-center">
+					<h3>Currently Banned Users</h3>
 				</div>
-			</div>
-		<?php } ?>
-	<?php } else { ?>
-		<h4>There are no banned users currently.</h4>
-	<?php }?>
+				<div class="row justify-content-md-center">
+					<?php foreach($bannedUsers->result() as $row){ ?>
+						<div class="col-md-3" style="padding: .75rem 1rem;">
+							<div class="card">
+								<div class="card-header">
+									<?php echo $row->userName; ?> <button type="button" class="btn btn-sm btn-outline-success mr-auto" value="Unban" onclick="unBan(<?php echo $row->id; ?>)">Unban</button>
+								</div>
+								<div class="card-body" style="padding: .75rem 1.25rem;">
+									<span class="card-text">
+										<?php echo $row->reason; ?>
+									</span>
+								</div>
+								<div class="card-footer">
+									<?php printf("Banned on %s | Expires at %s", $row->banStart, $row->banEnd); ?>
+								</div>
+							</div>
+						</div>
+					<?php } ?>
+				</div>
+			<?php } else { ?>
+				<h4>There are no banned users currently.</h4>
+			<?php }?>
+		</div>
+	</div>
 </div>

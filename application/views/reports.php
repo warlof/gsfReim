@@ -1,9 +1,6 @@
-<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
-<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/buttons/1.0.3/js/buttons.bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.0.3/css/buttons.bootstrap.min.css">
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap4.min.css">
 <style>
 	.ui-datepicker-calendar {
 		display: none;
@@ -21,19 +18,17 @@
 				$(this).datepicker('setDate', new Date(year, month,1));
 			}
 		});
-		$('#byShipTable').DataTable({buttons: ['csv','copy']});
-		$('#byCorpTable').DataTable({buttons: ['csv','copy']});
-		$('#byUserTable').DataTable({buttons: ['csv','copy']});
-		$('#byRegionTable').DataTable({buttons: ['csv','copy']});
-		$('#byTypeTable').DataTable({buttons: ['csv','copy']});
-		$('#reimCapTable').DataTable({buttons: ['csv','copy']});
-		$('#payoutsByUserTable').DataTable({buttons: ['csv','copy']});
+		$('#byShipTable').DataTable();
+		$('#byCorpTable').DataTable();
+		$('#byUserTable').DataTable();
+		$('#byRegionTable').DataTable();
+		$('#byTypeTable').DataTable();
+		$('#reimCapTable').DataTable();
+		$('#payoutsByUserTable').DataTable();
 		$('#allPayoutsTable').DataTable({
-			"pageLength": 50,
-			"order": [2, 'desc'],
-			"buttons": ['csv','copy']
+			"pageLength": 10,
+			"order": [2, 'desc']
 		});
-		
 	});
 	function setDate(){
 		var dt = document.getElementById("filDate").value;
@@ -57,42 +52,43 @@
 		$("#payoutNote").modal('show');
 	}
 </script>
-<div class="col-md-12">
-	<div class="row">
-		<div class="col-md-2 col-md-offset-1">
-			<div class="input-group">
-				<span class="input-group-addon">Date</span>
-				<input type="text" class="form-control" id="filDate" value="" placeholder="Enter Date, YYYY-MM"></input>
-			</div>
-			<br>
-			<button type="button" class="btn btn-success" value="Re-Generate" onclick="setDate()">Re-Generate</button>
-		</div>
-		<div class="col-md-2 col-md-offset-1">
+<div class="col-sm-12">
+	<div class="row justify-content-md-center">
+		<div class="col-sm-2">
 			<h4>Showing data for <b><?php echo $date; ?></b></h4>
 		</div>
 	</div>
+	<div class="row justify-content-md-center">
+		<div class="col-sm-3">
+			<div class="input-group">
+				<span class="input-group-addon">Date</span>
+				<input type="text" class="form-control" id="filDate" value="" placeholder="Enter Date, YYYY-MM"></input>
+				<span class="input-group-btn"><button type="button" class="btn btn-outline-success" value="Re-Generate" onclick="setDate()">Re-Generate</button></span>
+			</div>
+		</div>
+	</div>
 	<br>
-	<div class="row">
-		<div class="col-md-10 col-md-offset-1">
-			<ul class="nav nav-tabs">
-				<li class="active"><a href="#byUser" data-toggle="tab">Losses by Forum Account</a></li>
-				<li><a href="#byShip" data-toggle="tab">Losses by Ship Type</a></li>
-				<li><a href="#byCorp" data-toggle="tab">Losses by Corporation</a></li>
-				<li><a href="#byRegion" data-toggle="tab">Losses by Region</a></li>
-				<li><a href="#reimCap" data-toggle="tab">Reimbursement Cap by Forum Account</a></li>
-				<li><a href="#byType" data-toggle="tab">Amounts by Payout Type</a></li>
-				<li><a href="#payoutsByUser" data-toggle="tab">Payouts Done by User</a></li>
-				<li><a href="#allPayouts" data-toggle="tab">Recent Payouts</a></li>
+	<div class="row justify-content-md-center">
+		<div class="col-sm-10">
+			<ul class="nav nav-tabs" id="reportTabs" role="tablist">
+				<li class="nav-item"><a class="nav-link active" href="#byUser" data-toggle="tab" role="tab" aria-controls="byUser" aria-expanded="true" id="byUser-Tab">Losses by Forum Account</a></li>
+				<li class="nav-item"><a class="nav-link" href="#byShip" data-toggle="tab" role="tab" aria-controls="byShip" id="byShip-Tab">Losses by Ship Type</a></li>
+				<li class="nav-item"><a class="nav-link" href="#byCorp" data-toggle="tab" role="tab" aria-controls="byCorp" id="byCorp-Tab">Losses by Corporation</a></li>
+				<li class="nav-item"><a class="nav-link" href="#byRegion" data-toggle="tab" role="tab" aria-controls="byRegion" id="byRegion-Tab">Losses by Region</a></li>
+				<li class="nav-item"><a class="nav-link" href="#reimCap" data-toggle="tab" role="tab" aria-controls="reimCap" id="reimCap-Tab">Reimbursement Cap by Forum Account</a></li>
+				<li class="nav-item"><a class="nav-link" href="#byType" data-toggle="tab" role="tab" aria-controls="byType" id="byType-Tab">Amounts by Payout Type</a></li>
+				<li class="nav-item"><a class="nav-link" href="#payoutsByUser" data-toggle="tab" role="tab" aria-controls="payoutsByUser" id="payoutsByUser-Tab">Payouts Done by User</a></li>
+				<li class="nav-item"><a class="nav-link" href="#allPayouts" data-toggle="tab" role="tab" aria-controls="allPayouts" id="allPayouts-Tab">Recent Payouts</a></li>
 			</ul>
 		</div>
 	</div>
 	<br>
-	<div class="row">
-		<div class="col-md-10 col-md-offset-1">
-			<div class="tab-content">
-				<div class="tab-pane active" id="byUser">
+	<div class="row justify-content-md-center">
+		<div class="col-sm-10">
+			<div class="tab-content" id="reportTabsContent">
+				<div class="tab-pane fade show active" id="byUser" role="tabpanel" aria-labelledby="byUser-Tab">
 					<?php if($byUser->num_rows() > 0){ ?>
-						<table class="table table-condensed table-striped" id="byUserTable">
+						<table class="table table-sm table-striped" id="byUserTable">
 							<thead>
 								<tr>
 									<th>Forum Name</th>
@@ -114,11 +110,11 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="byShip">
+				<div class="tab-pane fade" id="byShip" role="tabpanel" aria-labelledby="byShip-Tab">
 					<?php if($byShipType->num_rows() > 0){
 						$totalc = 0;
 						$totali = 0;?>
-						<table class="table table-condensed table-striped" id="byShipTable">
+						<table class="table table-sm table-striped" id="byShipTable">
 							<thead>
 								<tr>
 									<th>ShipType</th>
@@ -153,11 +149,11 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="byCorp">
+				<div class="tab-pane fade" id="byCorp" role="tabpanel" aria-labelledby="byCorp-Tab">
 					<?php if($byCorp->num_rows() > 0){ 
 						$totalc = 0;
 						$totali = 0;?>
-						<table class="table table-condensed table-striped" id="byCorpTable">
+						<table class="table table-sm table-striped" id="byCorpTable">
 							<thead>
 								<tr>
 									<th>Corporation Name</th>
@@ -188,11 +184,11 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="byRegion">
+				<div class="tab-pane fade" id="byRegion" role="tabpanel" aria-labelledby="byRegion-Tab">
 					<?php if($byRegion->num_rows() > 0){ 
 						$totalc = 0;
 						$totali = 0;?>
-						<table class="table table-condensed table-striped" id="byRegionTable">
+						<table class="table table-sm table-striped" id="byRegionTable">
 							<thead>
 								<tr>
 									<th>Region Name</th>
@@ -223,9 +219,9 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="reimCap">
+				<div class="tab-pane fade" id="reimCap" role="tabpanel" aria-labelledby="reimCap-Tab">
 					<?php if($capByUser->num_rows() > 0){ ?>
-						<table class="table table-condensed table-striped" id="reimCapTable">
+						<table class="table table-sm table-striped" id="reimCapTable">
 							<thead>
 								<tr>
 									<th>Forum Name</th>
@@ -252,10 +248,10 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="byType">
+				<div class="tab-pane fade" id="byType" role="tabpanel" aria-labelledby="byType-Tab">
 					<?php if($byType->num_rows() > 0){ 
 						$totali = 0;?>
-						<table class="table table-condensed table-striped" id="byTypeTable">
+						<table class="table table-sm table-striped" id="byTypeTable">
 							<thead>
 								<tr>
 									<th>Payout Type</th>
@@ -282,9 +278,9 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="payoutsByUser">
+				<div class="tab-pane fade" id="payoutsByUser" role="tabpanel" aria-labelledby="payoutsByUser-Tab">
 					<?php if($payoutsByUser->num_rows() > 0){ ?>
-						<table class="table table-condensed table-striped" id="payoutsByUserTable">
+						<table class="table table-sm table-striped" id="payoutsByUserTable">
 							<thead>
 								<tr>
 									<th>Forum Name</th>
@@ -306,9 +302,9 @@
 						<h4>There is no data to display.</h4>
 					<?php }?>
 				</div>
-				<div class="tab-pane" id="allPayouts">
+				<div class="tab-pane fade" id="allPayouts" role="tabpanel" aria-labelledby="allPayouts-Tab">
 					<?php if($allPayouts->num_rows() > 0){ ?>
-						<table class="table table-condensed table-striped" id="allPayoutsTable">
+						<table class="table table-sm table-striped" id="allPayoutsTable">
 							<thead>
 								<tr>
 									<th></th>
@@ -326,7 +322,7 @@
 							<tbody>
 								<?php foreach($allPayouts->result() as $row){?>
 									<tr>
-										<td><?php if($row->note <> '' && $row->note != NULL){?> <button type="button" class="btn btn-info btn-xs" onclick="showNote(<?php echo $row->killID; ?>)" value="Show Note">Show Note</button><?php } ?></td>
+										<td><?php if($row->note <> '' && $row->note != NULL){?> <button type="button" class="btn btn-outline-info btn-sm" onclick="showNote(<?php echo $row->killID; ?>)" value="Show Note">Show Note</button><?php } ?></td>
 										<td><?php echo $row->submittedBy; ?></td>
 										<td><?php echo $row->corpName; ?></td>
 										<td><?php echo $row->killTime; ?></td>

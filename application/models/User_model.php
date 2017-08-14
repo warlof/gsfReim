@@ -26,9 +26,10 @@ class User_model extends CI_Model {
 		$isReimDir = 0;
 		$inCapSwarm = 0;
 		$isCapDir = 0;
-		
+
 		if($auth_method == "CROWD"){
 			$headers = array("Authorization: Basic " . base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type: application/xml', 'Accept: application/xml');
+			//$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
 			$xmlBody = '<?xml version="1.0" encoding="UTF-8"?>
 								<password>
 	  								<value>@password@</value>
@@ -78,7 +79,7 @@ class User_model extends CI_Model {
 						$isCapDir = 1;
 						$isReimDir = 1;
 					}
-					if($user == 'kilgarth' || $user == 'innominate'){
+					if(in_array('Administrators', $groupData)){
 						$isReim = 1;
 						$isReimDir = 1;
 						$isCapDir = 1;
@@ -130,6 +131,7 @@ class User_model extends CI_Model {
 
 	function getGroups($user){
 		$headers = array("Authorization: Basic " . base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type: application/xml', 'Accept: application/xml');
+		//$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
 		$groupData = $this->curllib->makeRequest('GET', $this->crowdUrl."user/group/direct?username=".urlencode($user),'',$headers);
 
 		$gXMLData = simplexml_load_string($groupData);

@@ -99,9 +99,8 @@ $(document).ready(function() {
 		<p><?php echo $this->session->userdata('vars')['errReason']; ?></p>
 		<p><?php echo $this->session->userdata('vars')['errMessage']; ?></p>
 	<?php } else { ?>
-		<div class="row">
-			<div class="col-md-10 col-md-offset-1">
-				
+		<div class="row justify-content-md-center">
+			<div class="col-md-8">
 				<?php if($this->session->userdata('vars')['isBanned'] == 1){ ?>
 					<h3>You have been banned from reimbursement until: <?php echo $this->session->userdata('vars')['banEnd']; ?></h3>
 					<h4>Reason:</h4>
@@ -111,7 +110,7 @@ $(document).ready(function() {
 					<?php if($kills->num_rows() > 0){ ?>
 						<hr>
 						<h4>My Reserved Losses</h4>
-						<table class="table table-condensed table-striped">
+						<table class="table table-sm table-striped">
 							<thead>
 								<tr>
 									<th></th>
@@ -135,9 +134,9 @@ $(document).ready(function() {
 										$class = '';
 									}?>
 									<tr <?php echo $class; ?>>
-										<td><button type="button" class="btn btn-xs btn-info" onclick="showFit(<?php echo $row->killID; ?>)">Show Fit</button>&nbsp;<button type="button" class="btn btn-xs btn-info" onclick="showAttackers(<?php echo $row->killID; ?>)">Attackers</button></td>
+										<td><button type="button" class="btn btn-sm btn-outline-info" onclick="showFit(<?php echo $row->killID; ?>)">Show Fit</button>&nbsp;<button type="button" class="btn btn-sm btn-outline-info" onclick="showAttackers(<?php echo $row->killID; ?>)">Attackers</button></td>
 										<?php if($row->bcast <> ''){ ?>
-											<td><button type="button" class="btn btn-xs btn-info" onclick="showBroadcast(<?php echo $row->killID; ?>)">Show Broadcast</button></td>
+											<td><button type="button" class="btn btn-sm btn-outline-info" onclick="showBroadcast(<?php echo $row->killID; ?>)">Show Broadcast</button></td>
 											<div id="<?php echo $row->killID . "bcast"; ?>" style="display: none;">
 												<pre><?php echo $row->bcast; ?></pre>
 											</div>
@@ -152,7 +151,7 @@ $(document).ready(function() {
 										<td><?php echo $row->regName; ?></td>
 										<td><?php echo $row->shipName; ?></td>
 										<td><a href="https://zkillboard.com/kill/<?php echo $row->killID; ?>" target="_blank">zKB</a></td>
-										<td><button type="button" class="btn btn-xs btn-success" value="Pay" onclick="pay(<?php echo $row->killID; ?>)">Pay</button>&nbsp;<button type="button" class="btn btn-xs btn-danger" value="Deny" onclick="denyPayout(<?php echo $row->killID; ?>)">Deny</button>&nbsp;<button type="button" class="btn btn-xs btn-info" value="Refresh" onclick="refreshPayouts(<?php echo $row->killID; ?>)">Refresh</button></td>
+										<td><button type="button" class="btn btn-sm btn-outline-success" value="Pay" onclick="pay(<?php echo $row->killID; ?>)">Pay</button>&nbsp;<button type="button" class="btn btn-sm btn-outline-danger" value="Deny" onclick="denyPayout(<?php echo $row->killID; ?>)">Deny</button>&nbsp;<button type="button" class="btn btn-sm btn-outline-info" value="Refresh" onclick="refreshPayouts(<?php echo $row->killID; ?>)">Refresh</button></td>
 									</tr>
 									<div id="<?php echo $row->killID; ?>-attackers" style="display: none;">
 										<div style="margin-left: 15px; margin-right: 15px;">
@@ -163,22 +162,19 @@ $(document).ready(function() {
 												<div class="row">
 													<h4>Total Attackers: <b><?php echo $countAttackers; ?></b></h4>
 												</div>
-												<?php
-												foreach($attackerArr as $key => $value){
-													$name = $key;
-													$corp = $value['corporation'];
-													$alli = $value['alliance'];
-													$ship = $value['shipType'];
-													$dmg = $value['damageDone'];
-													$weapon = $value['weaponType']; ?>
-													<div class="row">
-														<div class="well well-sm">
-															<h5><?php echo "<b>".$name."</b> (" . $corp.') ['. $alli.']'; ?></h5>
-															<p>Ship: <b><?php echo $ship; ?></b> - <?php echo $weapon; ?> (<?php echo $dmg; ?>)</p>
-														</div>
-													</div>
-												<?php }
-											} else { ?>
+												<ul class="list-group">
+													<?php
+													foreach($attackerArr as $key => $value){
+														$name = $key;
+														$corp = $value['corporation'];
+														$alli = $value['alliance'];
+														$ship = $value['shipType'];
+														$dmg = $value['damageDone'];
+														$weapon = $value['weaponType']; ?>
+														<li class="list-group-item"><?php printf("<strong>%s</strong>&nbsp;(%s)[%s]&nbsp;|&nbsp;Ship:&nbsp;<strong>%s</strong>&nbsp;-&nbsp;%s&nbsp;(%d)", $name, $corp, $alli, $ship, $weapon, $dmg); ?></li>
+													<?php } ?>
+												</ul>
+											<?php } else { ?>
 												<h4>This kill was submitted before the attackers were added, thus there is no data to show.</h4>
 											<?php } ?>
 										</div>
@@ -253,11 +249,11 @@ $(document).ready(function() {
 		</div>
 		<?php if($this->session->userdata('vars')['isReim'] == 1 || $this->session->userdata('vars')['isReimDir'] == 1){ ?>
 			<hr>
-			<div class="row">
+			<div class="row justify-content-md-center">
 				<div class="col-md-8 col-md-offset-1">
 					<h4>Pending Losses</h4>
 					<?php if($allKills->num_rows() > 0){ ?>
-						<table class="table table-condensed table-striped">
+						<table class="table table-sm table-striped">
 							<thead>
 								<tr>
 									<th></th>
@@ -280,9 +276,9 @@ $(document).ready(function() {
 										$class = '';
 									}?>
 									<tr <?php echo $class; ?>>
-										<td><button type="button" class="btn btn-xs btn-info" onclick="showFit(<?php echo $row->killID; ?>)">Show Fit</button></td>
+										<td><button type="button" class="btn btn-sm btn-outline-info" onclick="showFit(<?php echo $row->killID; ?>)">Show Fit</button></td>
 										<?php if($row->bcast <> ''){ ?>
-											<td><button type="button" class="btn btn-xs btn-info" onclick="showBroadcast(<?php echo $row->killID; ?>)">Show Broadcast</button></td>
+											<td><button type="button" class="btn btn-sm btn-outline-info" onclick="showBroadcast(<?php echo $row->killID; ?>)">Show Broadcast</button></td>
 											<div id="<?php echo $row->killID . "bcast"; ?>" style="display: none;">
 												<pre><?php echo $row->bcast; ?></pre>
 											</div>
@@ -365,7 +361,7 @@ $(document).ready(function() {
 	<?php } ?>
 </div>
 <div class="modal fade" id="payoutBox" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" style="width: 50%">
+  <div class="modal-dialog modal-lg" style="width: 50%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -377,7 +373,7 @@ $(document).ready(function() {
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <div class="modal fade" id="fitting" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" style="width: 50%">
+  <div class="modal-dialog modal-lg" style="width: 50%">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

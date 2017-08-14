@@ -71,8 +71,8 @@ $(document).ready(function() {
 	}
 </script>
 <div class="col-md-12">
-	<div class="row">
-		<div class="col-md-4 col-md-offset-1 well well-sm">
+	<div class="row justify-content-md-center">
+		<div class="col-md-4">
 			<h3>Add Item</h3>
 			<div class="input-group">
 				<span class="input-group-addon">Type Name</span>
@@ -93,13 +93,13 @@ $(document).ready(function() {
 				<input type="text" class="form-control" id="payoutAmount"></input>
 			</div>
 			<br>
-			<button type="button" class="btn btn-success" onclick="addPayout()" value="Add Item">Add Item</button>
+			<button type="button" class="btn btn-outline-success" onclick="addPayout()" value="Add Item">Add Item</button>
 			<div id="payoutAddResult"></div>
 		</div>
-		<div class="col-md-5 col-md-offset-1">
+		<div class="col-md-5">
 			<h3>Existing Items</h3>
 			<?php if($payouts->num_rows() > 0){ ?>
-				<table class="table table-condensed table-striped">
+				<table class="table table-sm table-striped">
 					<thead>
 						<tr>
 							<th>Item Name</th>
@@ -115,8 +115,8 @@ $(document).ready(function() {
 								<td><?php echo $row->typeName; ?></td>
 								<td><?php echo $row->payoutType; ?></td>
 								<td><?php echo number_format($row->payoutAmount,2); ?></td>
-								<td><button type="button" class="btn btn-xs btn-info" onclick="payoutDetail(<?php echo $row->id; ?>)" value="Edit">Edit</button></td>
-								<td><button type="button" class="btn btn-xs btn-info" onclick="delPayout(<?php echo $row->id; ?>)" value="Edit">Delete</button></td>
+								<td><button type="button" class="btn btn-sm btn-outline-info" onclick="payoutDetail(<?php echo $row->id; ?>)" value="Edit">Edit</button></td>
+								<td><button type="button" class="btn btn-sm btn-outline-info" onclick="delPayout(<?php echo $row->id; ?>)" value="Edit">Delete</button></td>
 							</tr>
 						<?php } ?>
 					</tbody>
