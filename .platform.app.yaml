@@ -3,21 +3,22 @@ name: 'gsfreim'
 type: 'php:7.0'
 
 relationships:
- database: 'database:mysql'
- redis: "rediscache:redis"
+  database: 'database:mysql'
+  redis: "rediscache:redis"
 
 runtime:
- extensions:
-  - redis
-
-  
+  extensions:
+    - redis
+    
+build:
+  flavor: none
 
 web:
- locations:
-  '/':
-    root: ''
-    passthru: '/index.php'
+  locations:
+    '/':
+      root: ''
+      passthru: '/index.php'
 
 disk: 2048
 mounts:
- '/application/logs': 'shared:files/logs'
+  '/application/logs': 'shared:files/logs'
