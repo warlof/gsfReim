@@ -47,6 +47,8 @@ $config['AUTH_METHOD'] = "CROWD";			//Set to INTERNAL to use internal authentica
 $config['ADMIN_PASSWORD'] = 'asdqwe123';	//Set to whatever you want the admin account password to be.
 $config['ALLOW_REGISTRATION'] = TRUE;		//Only applies to when using internal auth, will not affect any external authentication.
 
+$config['getStats'] = FALSE;
+
 
 /*
 |--------------------------------------------------------------------------

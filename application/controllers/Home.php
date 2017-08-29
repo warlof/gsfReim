@@ -89,6 +89,13 @@ class Home extends CI_Controller {
 					if(isset($crestData['exceptionType']) && $crestData['exceptionType'] == 'ForbiddenError'){
 						echo "There was an error, please check your link and try again. If you continue to see this error, please contact an administrator.";
 					} else {
+						//Log the shit 
+						$dti = array(
+						             "user"		=> $this->session->userdata('vars')['user'],
+						             "type"		=> "kill_submit",
+						             "data"		=> json_encode(array("IP" => $this->input->ip_address(), "KillID" => $crestData['killID'], "CrestLink" => $crestLink))
+						             );
+						$this->db->insert("ulog", $dti);
 
 						//Parse the body to extract the data we care about
 						$killID = $crestData['killID'];

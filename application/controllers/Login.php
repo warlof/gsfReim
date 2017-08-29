@@ -31,6 +31,16 @@ class Login extends CI_Controller {
 		$vars['isCapDir'] = 0;
 		$vars['isBanned'] = 0;
 		$vars['groupData'] = array();
+		$loginStats = $this->config->item("getStats");
+
+		if($loginStats){
+			$vars['accountId'] = 0;
+			$vars['registered'] = "";
+			$vars['lastPost'] = "";
+			$vars['lastVisit'] = "";
+			$vars['lastJabber'] = "";
+			$vars['lastMumble'] = "";
+		}
 
 		$this->form_validation->set_rules('user', 'User', 'trim|required|xss_clean|strtolower');
 		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean');
@@ -65,6 +75,15 @@ class Login extends CI_Controller {
 				$vars['isCapDir'] = $userData['isCapDir'];
 				if(isset($userData['groupData'])){
 					$vars['groupData'] = $userData['groupData'];
+				}
+
+				if($loginStats){
+					$vars['accountId'] = $userData['accountId'];
+					$vars['registered'] = $userData['registered'];
+					$vars['lastPost'] = $userData['lastPost'];
+					$vars['lastVisit'] = $userData['lastVisit'];
+					$vars['lastJabber'] = $userData['lastJabber'];
+					$vars['lastMumble'] = $userData['lastMumble'];
 				}
 
 				$ldata = array(	'user'	=> $user,

@@ -7,6 +7,8 @@ class User_model extends CI_Model {
 		$this->crowdUrl = "";
 		$this->crowdUser = "";
 		$this->crowdPass = "";
+		$this->managerToken = "";
+		$this->managerBase = "";
 	}
 	function get_val($str, $key1, $key2) {
 		if(strpos('@@@' . $str, $key1) <> 0 && strpos('@@@' . $str, $key2) <> 0) {
@@ -20,6 +22,7 @@ class User_model extends CI_Model {
 
 	function check_login($user,$password){
 		$auth_method = $this->config->item("AUTH_METHOD");
+		$getStats = $this->config->item("getStats");
 		$return = array();
 		$return['err'] = FALSE;
 		$isReim = 0;
@@ -29,7 +32,6 @@ class User_model extends CI_Model {
 
 		if($auth_method == "CROWD"){
 			$headers = array("Authorization: Basic " . base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type: application/xml', 'Accept: application/xml');
-			//$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
 			$xmlBody = '<?xml version="1.0" encoding="UTF-8"?>
 								<password>
 	  								<value>@password@</value>
@@ -88,6 +90,12 @@ class User_model extends CI_Model {
 					$return['isReimDir'] = $isReimDir;
 					$return['inCapSwarm'] = $inCapSwarm;
 					$return['isCapDir'] = $isCapDir;
+
+					if($getStats){
+						//We need to get login statistics
+						$loginStats = $this->getLoginStats($user);
+						$return = array_merge($return,$loginStats);
+					}
 				}
 			}
 		} elseif($auth_method == "INTERNAL"){
@@ -131,7 +139,6 @@ class User_model extends CI_Model {
 
 	function getGroups($user){
 		$headers = array("Authorization: Basic " . base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type: application/xml', 'Accept: application/xml');
-		//$this->proxy->set_http(array('head' => array('Authorization' => "Basic ".base64_encode($this->crowdUser.":".$this->crowdPass), 'Content-Type' => 'application/xml', 'Accept' => 'application/xml')));
 		$groupData = $this->curllib->makeRequest('GET', $this->crowdUrl."user/group/direct?username=".urlencode($user),'',$headers);
 
 		$gXMLData = simplexml_load_string($groupData);
@@ -140,6 +147,34 @@ class User_model extends CI_Model {
 			$groups[] = (string) $group->attributes()->name[0];
 		}
 		return $groups;
+	}
+
+	function getMemberID($user){
+		$vrdb = $this->load->database("vilerat",TRUE);
+		$sql = "SELECT member_id FROM gsfForums.members WHERE replace(name, '&#39;', '\'') = ?";
+		$member_data = $vrdb->query($sql, array($user));
+		if($member_data->num_rows() > 0){
+			return $member_data->row(0)->member_id;
+		} else {
+			return 0;
+		}
+	}
+
+	function getLoginStats($name){
+		$memberID = $this->getMemberID($name);
+		if($memberID == 0){
+			log_message("error", "Unable to get member ID for $name.");
+			return array();
+		}
+		$headers = array("Authorization: Bearer ".$this->managerToken);
+		$data = $this->curllib->makeRequest("GET", sprintf("%s/account_detail/%s", $this->managerBase, $memberID),"", $headers);
+		$decoded = json_decode($data, TRUE);
+
+		if(count($decoded)){
+			return $decoded[0];
+		} else {
+			return array();
+		}
 	}
 
 	function registerUser($user, $password) {

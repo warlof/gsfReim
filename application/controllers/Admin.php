@@ -341,6 +341,16 @@ class Admin extends CI_Controller {
 			$killData = $this->db->where('killID', $killID)->get('kills');
 			
 			if($killData->num_rows() > 0){
+				if($this->config->item("getStats")){
+					$this->load->model("User_model");
+					$loginStats = $this->User_model->getLoginStats($killData->row(0)->submittedBy);
+					$mumbleDate = $loginStats['lastMumble'];
+					$mumbleDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastMumble']);
+					$jabberDate = $loginStats['lastJabber'];
+					$jabberDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastJabber']);
+					$forumsDate = $loginStats['lastActive'];
+					$forumsDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastActive']);
+				}
 				$payoutArr = unserialize($killData->row(0)->availablePayouts);
 				$payoutTypes = array_keys($payoutArr);
 				$payoutNames = $this->db->where_in('id', $payoutTypes)->get('payoutTypes');
@@ -374,23 +384,53 @@ class Admin extends CI_Controller {
 					<input type="hidden" id="<?php echo $killID . '-'.$key.'-PRE'; ?>" value="<?php echo $prefix; ?>"></input>
 				<?php }
 				if($killData->row(0)->ptQualified == 1 && $overPtCap == 0){ ?>
-					<span class="label label-success">Peacetime Qualified</span>
+					<span class="badge badge-success">Peacetime Qualified</span>
 				<?php } elseif($killData->row(0)->ptQualified == 0) { ?>
 					
 				<?php } else { ?>
-					<span class="label label-danger">NOT Peacetime Qualified</span>
+					<span class="badge badge-danger">NOT Peacetime Qualified</span>
 				<?php }
 				if($overPtCap == 1){ ?>
-					<span class="label label-danger">OVER PEACETIME CAP</span>
+					<span class="badge badge-danger">OVER PEACETIME CAP</span>
 				<?php } 
 				$sec = $killData->row(0)->secStatus;
 				if($sec <= 0.0){ ?>
-					<span class="label label-danger">NULL SEC</span>
+					<span class="badge badge-danger">NULL SEC</span>
 				<?php } elseif($sec > 0.0 && $sec < 0.5){ ?>
-					<span class="label label-warning">LOW SEC</span>
+					<span class="badge badge-warning">LOW SEC</span>
 				<?php } else { ?>
-					<span class="label label-info">HIGH SEC</span>
+					<span class="badge badge-info">HIGH SEC</span>
 				<?php }
+				if($this->config->item("getStats")){ 
+					if($mumbleDiff >= 0 && $mumbleDiff <= 3){
+						$mum = "success";
+					} elseif($mumbleDiff > 3 && $mumbleDiff <= 5){
+						$mum = "warning";
+					} else {
+						$mum = "danger";
+					}
+
+					if($jabberDiff >= 0 && $jabberDiff <= 3){
+						$jab = "success";
+					} elseif($jabberDiff > 3 && $jabberDiff <= 5){
+						$jab = "warning";
+					} else {
+						$jab = "danger";
+					}
+
+					if($forumsDiff >= 0 && $forumsDiff <= 3){
+						$for = "success";
+					} elseif($forumsDiff > 3 && $forumsDiff <= 5){
+						$for = "warning";
+					} else {
+						$for = "danger";
+					} ?>
+
+					<span class="badge badge-<?php echo $mum; ?>">M: <?php echo $mumbleDate; ?></span>
+					<span class="badge badge-<?php echo $jab; ?>">J: <?php echo $jabberDate; ?></span>
+					<span class="badge badge-<?php echo $for; ?>">F: <?php echo $forumsDate; ?></span>
+				<?php 
+				}
 				?>
 				
 				<hr>
@@ -725,5 +765,16 @@ class Admin extends CI_Controller {
 			echo "Done";
 		}
 
+	}
+
+	function dateDiff($date_1 , $date_2 , $differenceFormat = '%a' )
+	{
+	    $datetime1 = date_create($date_1);
+	    $datetime2 = date_create($date_2);
+	    
+	    $interval = date_diff($datetime1, $datetime2);
+	    
+	    return $interval->format($differenceFormat);
+	    
 	}
 }

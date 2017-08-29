@@ -65,4 +65,10 @@ class Api extends CI_Controller {
 			}
 		}
 	}
+
+	function test() {
+		print "<pre>";
+		print_r($this->session->all_userdata());
+		print "</pre>";
+	}
 }
