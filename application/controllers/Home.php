@@ -60,22 +60,23 @@ class Home extends CI_Controller {
 	}
 
 	public function index() {
-		$aSql = "SELECT k.killID, k.bcast, k.submittedBy, k.corpName, a.allianceName, k.victimName, k.killTime, k.sysName, k.regName, k.shipName, k.attackers, k.fit, k.overPtCap
-FROM affordablecare.kills k
-LEFT JOIN affordablecare.corporations c ON c.corpID = k.corpID
-LEFT JOIN affordablecare.alliances a ON a.allianceID = c.allianceID
-WHERE paid = 0 AND reservedBy IS NULL";
-
-		$kSql = "SELECT k.killID, k.bcast, k.submittedBy, k.corpName, a.allianceName, k.victimName, k.killTime, k.sysName, k.regName, k.shipName, k.attackers, k.fit, k.overPtCap
-FROM affordablecare.kills k
-LEFT JOIN affordablecare.corporations c ON c.corpID = k.corpID
-LEFT JOIN affordablecare.alliances a ON a.allianceID = c.allianceID
-WHERE paid = 0
-AND reservedBy = ?
-ORDER BY k.timestamp ASC";
-
-		$data['kills'] = $this->db->query($kSql, $this->session->userdata('vars')['user']);
-		$data['allKills'] = $this->db->query($aSql);
+		if($this->logged_in){
+			$data['kills'] = $this->db->select("k.killID, k.bcast, k.submittedBy, k.corpName, a.allianceName, k.victimName, k.killTime, k.sysName, k.regName, k.shipName, k.attackers, k.fit, k.overPtCap")
+					->from("kills k")
+					->join("corporations c", "c.corpID = k.corpID", "left")
+					->join("alliances a", "a.allianceID = c.allianceID", "left")
+					->where("k.paid", 0)
+					->where("k.reservedBy", $this->session->userdata('vars')['user'])
+					->order_by("k.timestamp", "ASC")
+					->get();
+			$data['allKills'] = $this->db->select("k.killID, k.bcast, k.submittedBy, k.corpName, a.allianceName, k.victimName, k.killTime, k.sysName, k.regName, k.shipName, k.attackers, k.fit, k.overPtCap")
+					->from("kills k")
+					->join("corporations c", "c.corpID = k.corpID", "left")
+					->join("alliances a", "a.allianceID = c.allianceID", "left")
+					->where("k.paid", 0)
+					->where("k.reservedBy", NULL)
+					->get();
+		}
 		$acceptLosses = $this->db->where('name','acceptLosses')->get('adminSettings');
 		$data['acceptLosses'] = $acceptLosses->row(0)->value;
 
