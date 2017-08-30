@@ -145,7 +145,7 @@ $(document).ready(function() {
 										<?php } ?>
 										<td id="vicName-<?php echo $row->killID; ?>"><?php echo $row->victimName; ?></td>
 										<td><?php echo $row->submittedBy; ?></td>
-										<td><?php echo $row->corpName; ?></td>
+										<td><?php printf("<strong>%s</strong> (<i>%s</i>)",$row->corpName,$row->allianceName); ?></td>
 										<td><?php echo $row->killTime; ?></td>
 										<td><?php echo $row->sysName; ?></td>
 										<td><?php echo $row->regName; ?></td>
@@ -287,7 +287,7 @@ $(document).ready(function() {
 										<?php } ?>
 										<td id="vicName-<?php echo $row->killID; ?>"><?php echo $row->victimName; ?></td>
 										<td><?php echo $row->submittedBy; ?></td>
-										<td><?php echo $row->corpName; ?></td>
+										<td><?php printf("<strong>%s</strong> (<i>%s</i>)",$row->corpName,$row->allianceName); ?></td>
 										<td><?php echo $row->killTime; ?></td>
 										<td><?php echo $row->sysName; ?></td>
 										<td><?php echo $row->regName; ?></td>

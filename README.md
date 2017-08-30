@@ -61,3 +61,7 @@ August 2017:
 	- Added api controller.
 	- Added function to get insurance numbers from CCP.
 	- Updated Database file.
+	- Added corporation and alliance tracking.
+	- Now show alliance (if the corp has one) as well as corporation on home page.
+	- Changed output on submit loss to include the name of the victim and the shiptype in the message.
+	- Added broadcast to output on My Losses page.

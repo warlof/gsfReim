@@ -60,8 +60,22 @@ class Home extends CI_Controller {
 	}
 
 	public function index() {
-		$data['kills'] = $this->db->where('paid', 0)->where('reservedBy', $this->session->userdata('vars')['user'])->order_by('timestamp', 'ASC')->get('kills');
-		$data['allKills'] = $this->db->where('paid',0)->where('reservedBy', NULL)->get('kills');
+		$aSql = "SELECT k.killID, k.bcast, k.submittedBy, k.corpName, a.allianceName, k.victimName, k.killTime, k.sysName, k.regName, k.shipName, k.attackers, k.fit, k.overPtCap
+FROM affordablecare.kills k
+LEFT JOIN affordablecare.corporations c ON c.corpID = k.corpID
+LEFT JOIN affordablecare.alliances a ON a.allianceID = c.allianceID
+WHERE paid = 0 AND reservedBy IS NULL";
+
+		$kSql = "SELECT k.killID, k.bcast, k.submittedBy, k.corpName, a.allianceName, k.victimName, k.killTime, k.sysName, k.regName, k.shipName, k.attackers, k.fit, k.overPtCap
+FROM affordablecare.kills k
+LEFT JOIN affordablecare.corporations c ON c.corpID = k.corpID
+LEFT JOIN affordablecare.alliances a ON a.allianceID = c.allianceID
+WHERE paid = 0
+AND reservedBy = ?
+ORDER BY k.timestamp ASC";
+
+		$data['kills'] = $this->db->query($kSql, $this->session->userdata('vars')['user']);
+		$data['allKills'] = $this->db->query($aSql);
 		$acceptLosses = $this->db->where('name','acceptLosses')->get('adminSettings');
 		$data['acceptLosses'] = $acceptLosses->row(0)->value;
 
@@ -259,7 +273,10 @@ class Home extends CI_Controller {
 												'ptQualified' => $ptQualified,
 												'overPtCap' => $overPtCap);
 									$this->db->insert('kills', $dti);
-									echo "The kill has been submitted, thank you.";
+
+									//Add a thing to process the corporation info and insert that shit too.
+									$this->updateCorpData($vicCorpID);
+									echo "The loss for $vicName in a $vicShipTypeName has been submitted, thank you.";
 								} else {
 									echo "We are currently not reimbursing this ship type. If you feel this is in error, please contact the reimbursement team.";
 								}
@@ -421,6 +438,39 @@ class Home extends CI_Controller {
 				}
 			} else {
 				echo "Something went wrong, could not find kill " . $killID;
+			}
+		}
+	}
+
+	function updateCorpData($corpID){
+		//Get the public corp info from ESI, store it into `corporations` and then grab the public alliance data and store that as well.
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
+		$dataArray = json_decode($data, TRUE);
+		if(count($dataArray) > 0){
+			if(isset($dataArray['alliance_id'])){
+				$allianceID = $dataArray['alliance_id'];
+			} else {
+				$allianceID = NULL;
+			}
+			$dti = array(
+			             "corpID"	=> $corpID,
+			             "corpName"	=>	$dataArray['corporation_name'],
+			             "allianceID"	=>	$allianceID,
+			             "ticker"	=>	$dataArray['ticker']
+			             );
+			$this->db->replace("corporations", $dti);
+		}
+
+		if($allianceID > 0){
+			$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
+			$dataArray = json_decode($data, TRUE);
+			if(count($dataArray) > 0){
+				$dti = array(
+				             "allianceID"	=> $allianceID,
+				             "allianceName"	=>	$dataArray['alliance_name'],
+				             "ticker"	=>	$dataArray['ticker']
+				             );
+				$this->db->replace("alliances", $dti);
 			}
 		}
 	}

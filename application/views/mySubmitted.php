@@ -33,6 +33,12 @@
 										Character Name: <strong><?php echo $row->victimName; ?></strong> <?php if($row->reservedBy != ''){?>| Handled By: <strong><?php echo $row->reservedBy; } ?></strong><br />
 										Status: <strong><?php echo $status; ?></strong><br />
 										Note: <?php echo $note; ?>
+										<?php if($row->bcast != "") { ?>
+											<hr>
+											Broadcast:
+											<br />
+											<?php echo $row->bcast;
+										} ?>
 									</span>
 								</div>
 								<div class="card-footer text-muted">
