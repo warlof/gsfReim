@@ -350,6 +350,9 @@ class Admin extends CI_Controller {
 					$jabberDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastJabber']);
 					$forumsDate = $loginStats['lastActive'];
 					$forumsDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastActive']);
+					$thirtyDayPap = $loginStats['participation']['30day'];
+					$sixtyDayPap = $loginStats['participation']['60day'];
+					$ninetyDayPap = $loginStats['participation']['90day'];
 				}
 				$payoutArr = unserialize($killData->row(0)->availablePayouts);
 				$payoutTypes = array_keys($payoutArr);
@@ -429,6 +432,9 @@ class Admin extends CI_Controller {
 					<span class="badge badge-<?php echo $mum; ?>">M: <?php echo $mumbleDate; ?></span>
 					<span class="badge badge-<?php echo $jab; ?>">J: <?php echo $jabberDate; ?></span>
 					<span class="badge badge-<?php echo $for; ?>">F: <?php echo $forumsDate; ?></span>
+					<span class="badge badge-info">30 Day Pap: <?php echo $thirtyDayPap; ?></span>
+					<span class="badge badge-info">60 Day Pap: <?php echo $sixtyDayPap; ?></span>
+					<span class="badge badge-info">90 Day Pap: <?php echo $ninetyDayPap; ?></span>
 				<?php 
 				}
 				?>

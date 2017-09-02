@@ -56,6 +56,9 @@ These are the admin settings. You shouldn't need to change a whole lot here, asi
 
 ## Changes
 ```
+September 2017:
+	- Added 30/60/90 pap counts to payout screen
+
 August 2017:
 	- Updated to Bootstrap 4.
 	- Added api controller.
@@ -65,3 +68,4 @@ August 2017:
 	- Now show alliance (if the corp has one) as well as corporation on home page.
 	- Changed output on submit loss to include the name of the victim and the shiptype in the message.
 	- Added broadcast to output on My Losses page.
+```
