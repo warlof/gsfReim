@@ -93,14 +93,13 @@ class Home extends CI_Controller {
 			if($this->logged_in && !$this->isBanned){
 				$crestLink = $this->input->post('crestLink', TRUE);
 				$bcastText = $this->input->post('bcast', TRUE);
-				$cD = getKillData($crestLink);
+				$cD = $this->getKillData($crestLink);
 				if($cD['err']){
 					echo "An error occurred: ".$cD['errMsg'];
 					return;
 				}
 
 				$crestData = $cD['data'];
-
 				//Log the shit 
 				$dti = array(
 				             "user"		=> $this->session->userdata('vars')['user'],
@@ -110,7 +109,7 @@ class Home extends CI_Controller {
 				$this->db->insert("ulog", $dti);
 
 				$curDate = new DateTime("now");
-				$killTime = str_replace('.','-',$killTime);
+				$killTime = str_replace('.','-',$crestData['killTime']);
 				$killDate = new DateTime($killTime);
 				$diff = $curDate->diff($killDate);
 				$dayDiff = $diff->format('%a');
@@ -118,7 +117,7 @@ class Home extends CI_Controller {
 				$allowedDateDiff = $aDd->row(0)->value;
 
 				if($dayDiff <= $allowedDateDiff){
-					$sysChk = $this->db->where('sys_eve_id', $sysID)->get('vwsysconreg');
+					$sysChk = $this->db->where('sys_eve_id', $crestData['sysID'])->get('vwsysconreg');
 					$regID = $sysChk->row(0)->reg_id;
 					$regName = $sysChk->row(0)->reg_name;
 					$secStatus = $sysChk->row(0)->sec;
@@ -138,16 +137,16 @@ class Home extends CI_Controller {
 					}
 					
 					//Check to see if the kill exists
-					$dbchk = $this->db->where('killID', $killID)->get('kills');
+					$dbchk = $this->db->where('killID', $crestData['killID'])->get('kills');
 					if($dbchk->num_rows() > 0){
 						//It exists, so notify user as such
 						echo "This kill has already been submitted.";
-					} elseif ((in_array($vicShipTypeID,$carriers) && $this->vars['inCapSwarm'] == 1) || !in_array($vicShipTypeID,$carriers)) {
+					} elseif ((in_array($crestData['vicShipTypeID'],$carriers) && $this->vars['inCapSwarm'] == 1) || !in_array($crestData['vicShipTypeID'],$carriers)) {
 						//Kill does NOT exist in db, so lets see if there is a payout set for this ship
-						$poChk = $this->db->select('p.payoutAmount, p.payoutType, p.typeID, p.id, p.typeName')->from('payouts p')->join('payoutTypes pt','pt.id = p.payoutType')->where('p.typeID', $vicShipTypeID)->where('pt.active', '1')->get();
+						$poChk = $this->db->select('p.payoutAmount, p.payoutType, p.typeID, p.id, p.typeName')->from('payouts p')->join('payoutTypes pt','pt.id = p.payoutType')->where('p.typeID', $crestData['vicShipTypeID'])->where('pt.active', '1')->get();
 						$payoutArr = array();
 						if($poChk->num_rows() > 0){
-							if($vicCorpID == 667531913){
+							if($crestData['vicCorpID'] == 667531913){
 								$bonusamt = $this->db->where('name', 'waffeBonus')->get('adminSettings');
 								$bonusCap = $this->db->where('name', 'waffeBonusCap')->get('adminSettings');
 								if($bonusamt->num_rows() > 0){
@@ -162,7 +161,7 @@ class Home extends CI_Controller {
 								}
 							}
 							foreach($poChk->result() as $row){
-								if($vicCorpID == 667531913){
+								if($crestData['vicCorpID'] == 667531913){
 									$bonusPay = $row->payoutAmount * $bonus;
 									if($bonusPay <= $bonusCapAmt){
 										$payout = $row->payoutAmount + $bonusPay;
@@ -175,20 +174,20 @@ class Home extends CI_Controller {
 								$payoutArr[$row->payoutType] = $payout;
 							}
 							$payouts = serialize($payoutArr);
-							$dti = array('killID' => $killID,
-										'killTime' => $killTime,
+							$dti = array('killID' => $crestData['killID'],
+										'killTime' => $crestData['killTime'],
 										'crest_link' => $crestLink,
 										'bcast' => $bcastText,
-										'fit' => serialize($fit),
-										'attackers' => serialize($attackerArr),
-										'victimName' => $vicName,
-										'victimID' => $vicID,
-										'corpID' => $vicCorpID,
-										'corpName' => $vicCorpName,
-										'shipID' => $vicShipTypeID,
-										'shipName' => $vicShipTypeName,
-										'sysID' => $sysID,
-										'sysName' => $sysName,
+										'fit' => serialize($crestData['fit']),
+										'attackers' => serialize($crestData['attackerArr']),
+										'victimName' => $crestData['vicName'],
+										'victimID' => $crestData['vicID'],
+										'corpID' => $crestData['vicCorpID'],
+										'corpName' => $crestData['vicCorpName'],
+										'shipID' => $crestData['vicShipTypeID'],
+										'shipName' => $crestData['vicShipTypeName'],
+										'sysID' => $crestData['sysID'],
+										'sysName' => $crestData['sysName'],
 										'regID' => $regID,
 										'regName' => $regName,
 										'secStatus' => $secStatus,
@@ -199,8 +198,8 @@ class Home extends CI_Controller {
 							$this->db->insert('kills', $dti);
 
 							//Add a thing to process the corporation info and insert that shit too.
-							$this->updateCorpData($vicCorpID);
-							echo "The loss for $vicName in a $vicShipTypeName has been submitted, thank you.";
+							$this->updateCorpData($crestData['vicCorpID']);
+							echo sprintf("The loss for %s in a %s has been submitted, thank you.",$crestData['vicName'],$crestData['vicShipTypeName']);
 						} else {
 							echo "We are currently not reimbursing this ship type. If you feel this is in error, please contact the reimbursement team.";
 						}
@@ -505,7 +504,7 @@ class Home extends CI_Controller {
 			$ret['data']['vicName'] = $charData['name'];
 
 			$ret['data']['vicShipTypeID'] = $crestData['victim']['ship_type_id'];
-			$shipData = $this->getItem($crestData['victim']['ship_type_id'])
+			$shipData = $this->getItem($crestData['victim']['ship_type_id']);
 			$ret['data']['vicShipTypeName'] = $shipData['typeName'];
 
 			$ret['data']['vicCorpID'] = $crestData['victim']['corporation_id'];
@@ -553,7 +552,7 @@ class Home extends CI_Controller {
 													'alliance' => $alliance,
 													'shipType' => $shiptype,
 													'weaponType' => $weaponType,
-													'damageDone' => $value['damage_done']);
+													'damageDone' => $a['damage_done']);
 					$i++;
 				}
 
@@ -590,6 +589,8 @@ class Home extends CI_Controller {
 			$ret['errMsg'] = "Invalid link provided.";
 			return $ret;
 		}
+
+		return $ret;
 	}
 
 	function getCharacter($charID) {
