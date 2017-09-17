@@ -6,7 +6,8 @@
 	<title>GSF Affordable Care</title>
 	<script src='https://code.jquery.com/jquery-2.1.1.min.js' type="text/javascript"></script>
 	<script src="/assets/js/tether.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
+	<link rel="stylesheet" href="https://bootswatch.com/4-alpha/cosmo/bootstrap.css">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 	<link rel="icon" type="image/x-icon" href="/favicon.ico">
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -26,6 +27,9 @@
 		.navbar-collapse { margin-bottom: -15px; }
 		.navbar { margin-bottom: 10px; }
 		.modal-lg { max-width: 1000px; }
+		body {
+			font-size: 0.9rem;
+		}
 	</style>
 
 </head>
@@ -135,7 +139,7 @@ if($vars['isReimDir'] == 1){?>
 	</script>
 <?php } ?>
 <body>
-	<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+	<nav class="navbar navbar-toggleable-md navbar-inverse bg-primary">
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -186,7 +190,7 @@ if($vars['isReimDir'] == 1){?>
 				<form class="form-inline" action="<?php echo base_url('login'); ?>" method="post" accept-charset="utf-8">
 					<input class="form-control mr-sm-2" type="text" id="user" name="user" placeholder="User Name">
 					<input class="form-control mr-sm-2" type="password" id="password" name="password" placeholder="Password">
-					<button type="submit" class="btn btn-outline-primary my-2 my-sm-0">Login</button>
+					<button type="submit" class="btn btn-outline-info my-2 my-sm-0">Login</button>
 					<?php
 					if($this->config->item('AUTH_METHOD') == "INTERNAL" && $this->config->item("ALLOW_REGISTRATION")){ ?>
 						<button type="button" class="btn btn-outline-success my-2 my-sm-0" id="registerAccount" value="Register">Register</button>
@@ -209,7 +213,7 @@ if($vars['isReimDir'] == 1){?>
       </div>
       <div class="modal-body" id="submitKillBody">
 		<div class="input-group">
-			<span class="input-group-addon">CREST Link</span>
+			<span class="input-group-addon">CREST Link or ESI Link</span>
 			<?php echo form_input(array('name' => 'crestLink', 'id' => 'crestLink', 'class' => 'form-control')); ?>
 		</div>
 		<br>
