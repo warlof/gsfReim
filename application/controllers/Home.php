@@ -86,11 +86,6 @@ class Home extends CI_Controller {
 	}
 
 	function submitKill(){
-		$low = array('11','12','13','14','15','16','17','18');
-		$med = array('19','20','21','22','23','24','25','26');
-		$high = array('27','28','29','30','31','32','33','34');
-		$rigs = array('92','93','94','95','96','97','98','99');
-		$fit = array();
 		$user = $this->vars['user'];
 		$carriers = array(19720,19722,19724,19726,34339,34341,34343,34345,23757,23911,23915,24483,37604,37605,37606,37607);
 
@@ -98,198 +93,122 @@ class Home extends CI_Controller {
 			if($this->logged_in && !$this->isBanned){
 				$crestLink = $this->input->post('crestLink', TRUE);
 				$bcastText = $this->input->post('bcast', TRUE);
-				if(strpos($crestLink, 'crest') > 0){
-					$cD = $this->curllib->makeRequest('GET', $crestLink);
-					$crestData = json_decode($cD, TRUE);
-					if(isset($crestData['exceptionType']) && $crestData['exceptionType'] == 'ForbiddenError'){
-						echo "There was an error, please check your link and try again. If you continue to see this error, please contact an administrator.";
-					} else {
-						//Log the shit 
-						$dti = array(
-						             "user"		=> $this->session->userdata('vars')['user'],
-						             "type"		=> "kill_submit",
-						             "data"		=> json_encode(array("IP" => $this->input->ip_address(), "KillID" => $crestData['killID'], "CrestLink" => $crestLink))
-						             );
-						$this->db->insert("ulog", $dti);
+				$cD = getKillData($crestLink);
+				if($cD['err']){
+					echo "An error occurred: ".$cD['errMsg'];
+					return;
+				}
 
-						//Parse the body to extract the data we care about
-						$killID = $crestData['killID'];
-						$killTime = $crestData['killTime'];
-						$numAttackers = $crestData['attackerCount'];
-						$sysID = $crestData['solarSystem']['id'];
-						$sysName = $crestData['solarSystem']['name'];
-						$vicName = $crestData['victim']['character']['name'];
-						$vicID = $crestData['victim']['character']['id'];
-						$vicShipTypeID = $crestData['victim']['shipType']['id'];
-						$vicShipTypeName = $crestData['victim']['shipType']['name'];
-						$vicCorpID = $crestData['victim']['corporation']['id'];
-						$vicCorpName = $crestData['victim']['corporation']['name'];
-						$damageTaken = $crestData['victim']['damageTaken'];
-						$attackers = $crestData["attackers"];
-						$attackerArr = array();
-						$i = 0;
-						if(count($attackers) > 0){
-							foreach($attackers as $key => $value){
-								$alliance = '';
-								if(isset($value['alliance'])){
-									$alliance = $value['alliance']['name'];
-								}
-								if(isset($value['shipType'])){
-									$shiptype = $value['shipType']['name'];
-								} else {
-									$shiptype = "Unknown";
-								}
-								if(isset($value['character'])){
-										$character = $value['character']['name'];
-								} else {
-									$character = 'Unknown ' . $i;
-								}
-								if(isset($value['weaponType'])){
-									$weaponType = $value['weaponType']['name'];
-								} else {
-									$weaponType = "Unknown";
-								}
-								if(isset($value['corporation'])){
-									$corporation = $value['corporation']['name'];
-								} else {
-									$corporation = "Unknown Corporation";
-								}
-								$attackerArr[$character] = array('corporation' => $corporation,
-																				'alliance' => $alliance,
-																				'shipType' => $shiptype,
-																				'weaponType' => $weaponType,
-																				'damageDone' => $value['damageDone_str']);
-								$i++;
-							}
-						} else {
-							$errid = uniqid();
-							echo "Something went wrong and it was probably CCP's fault. Try again later. If it still doesn't work, give this to kilgarth: " . count($attackers) . " | ".$errid;
-							$fn = $errid.".txt";
-							file_put_contents($fn, $cD);
-							die();
-						}
+				$crestData = $cD['data'];
 
+				//Log the shit 
+				$dti = array(
+				             "user"		=> $this->session->userdata('vars')['user'],
+				             "type"		=> "kill_submit",
+				             "data"		=> json_encode(array("IP" => $this->input->ip_address(), "KillID" => $crestData['killID'], "CrestLink" => $crestLink))
+				             );
+				$this->db->insert("ulog", $dti);
 
-						$curDate = new DateTime("now");
-						$killTime = str_replace('.','-',$killTime);
-						$killDate = new DateTime($killTime);
-						$diff = $curDate->diff($killDate);
-						$dayDiff = $diff->format('%a');
-						$aDd = $this->db->where('name', 'maxDayDiff')->get('adminSettings');
-						$allowedDateDiff = $aDd->row(0)->value;
+				$curDate = new DateTime("now");
+				$killTime = str_replace('.','-',$killTime);
+				$killDate = new DateTime($killTime);
+				$diff = $curDate->diff($killDate);
+				$dayDiff = $diff->format('%a');
+				$aDd = $this->db->where('name', 'maxDayDiff')->get('adminSettings');
+				$allowedDateDiff = $aDd->row(0)->value;
 
-						if($dayDiff <= $allowedDateDiff){
-							$sysChk = $this->db->where('sys_eve_id', $sysID)->get('vwsysconreg');
-							$regID = $sysChk->row(0)->reg_id;
-							$regName = $sysChk->row(0)->reg_name;
-							$secStatus = $sysChk->row(0)->sec;
-							$ptQualified = 0;
-							$overPtCap = 0;
+				if($dayDiff <= $allowedDateDiff){
+					$sysChk = $this->db->where('sys_eve_id', $sysID)->get('vwsysconreg');
+					$regID = $sysChk->row(0)->reg_id;
+					$regName = $sysChk->row(0)->reg_name;
+					$secStatus = $sysChk->row(0)->sec;
+					$ptQualified = 0;
+					$overPtCap = 0;
 
-							$ptChk = $this->db->where('regID', $regID)->get("ptRegions");
-							if($ptChk->num_rows() > 0){
-								$ptQualified = 1;
-								$ptCap = $this->db->where('name', 'ptCap')->get('adminSettings');
-								$ptCapVal = $ptCap->row(0)->value;
-								$d = $killDate->format('Y-m');
-								$ptAmtChk = $this->db->where('submittedBy', $user)->where('month', $d)->get('vwptcap');
-								if($ptAmtChk->num_rows() > 0 && $ptAmtChk->row(0)->total >= $ptCapVal){
-									$overPtCap = 1;
-								}
-							}
-
-							//Lets loop through the items and add them to an array so that we can figure out where they were on the ship.
-							foreach($crestData['victim']['items'] as $item){
-								if(in_array($item['flag'], $high)){
-									$fit['high'][] = $item['itemType']['name'];
-								} elseif(in_array($item['flag'], $med)){
-									$fit['med'][] = $item['itemType']['name'];
-								} elseif(in_array($item['flag'], $low)){
-									$fit['low'][] = $item['itemType']['name'];
-								} elseif($item['flag'] == 5){
-									$fit['cargo'][] = $item['itemType']['name'];
-								} elseif(in_array($item['flag'], $rigs)){
-									$fit['rigs'][] = $item['itemType']['name'];
-								} else {
-									$fit['other'][] = $item['itemType']['name'];
-								}
-							}
-							//Check to see if the kill exists
-							$dbchk = $this->db->where('killID', $killID)->get('kills');
-							if($dbchk->num_rows() > 0){
-								//It exists, so notify user as such
-								echo "This kill has already been submitted.";
-							} elseif ((in_array($vicShipTypeID,$carriers) && $this->vars['inCapSwarm'] == 1) || !in_array($vicShipTypeID,$carriers)) {
-								//Kill does NOT exist in db, so lets see if there is a payout set for this ship
-								$poChk = $this->db->select('p.payoutAmount, p.payoutType, p.typeID, p.id, p.typeName')->from('payouts p')->join('payoutTypes pt','pt.id = p.payoutType')->where('p.typeID', $vicShipTypeID)->where('pt.active', '1')->get();
-								$payoutArr = array();
-								if($poChk->num_rows() > 0){
-									if($vicCorpID == 667531913){
-										$bonusamt = $this->db->where('name', 'waffeBonus')->get('adminSettings');
-										$bonusCap = $this->db->where('name', 'waffeBonusCap')->get('adminSettings');
-										if($bonusamt->num_rows() > 0){
-											$bonus = $bonusamt->row(0)->value;
-										} else {
-											$bonus = 0;
-										}
-										if($bonusCap->num_rows() > 0){
-											$bonusCapAmt = $bonusCap->row(0)->value;
-										} else {
-											$bonusCapAmt = 0;
-										}
-									}
-									foreach($poChk->result() as $row){
-										if($vicCorpID == 667531913){
-											$bonusPay = $row->payoutAmount * $bonus;
-											if($bonusPay <= $bonusCapAmt){
-												$payout = $row->payoutAmount + $bonusPay;
-											} else {
-												$payout = $row->payoutAmount + $bonusCapAmt;
-											}
-										} else {
-											$payout = $row->payoutAmount;
-										}
-										$payoutArr[$row->payoutType] = $payout;
-									}
-									$payouts = serialize($payoutArr);
-									$dti = array('killID' => $killID,
-												'killTime' => $killTime,
-												'crest_link' => $crestLink,
-												'bcast' => $bcastText,
-												'fit' => serialize($fit),
-												'attackers' => serialize($attackerArr),
-												'victimName' => $vicName,
-												'victimID' => $vicID,
-												'corpID' => $vicCorpID,
-												'corpName' => $vicCorpName,
-												'shipID' => $vicShipTypeID,
-												'shipName' => $vicShipTypeName,
-												'sysID' => $sysID,
-												'sysName' => $sysName,
-												'regID' => $regID,
-												'regName' => $regName,
-												'secStatus' => $secStatus,
-												'availablePayouts' => $payouts,
-												'submittedBy' => $user,
-												'ptQualified' => $ptQualified,
-												'overPtCap' => $overPtCap);
-									$this->db->insert('kills', $dti);
-
-									//Add a thing to process the corporation info and insert that shit too.
-									$this->updateCorpData($vicCorpID);
-									echo "The loss for $vicName in a $vicShipTypeName has been submitted, thank you.";
-								} else {
-									echo "We are currently not reimbursing this ship type. If you feel this is in error, please contact the reimbursement team.";
-								}
-							} else {
-								echo "You are not currently in capswarm and thus not eligible for peace time reimbursement for a carrier.";
-							}
-						} else {
-							echo "This loss is too old. You may only submit losses up to <b>" . $allowedDateDiff . "</b> days. Your loss is <b>" . $dayDiff."</b> days old.";
+					$ptChk = $this->db->where('regID', $regID)->get("ptRegions");
+					if($ptChk->num_rows() > 0){
+						$ptQualified = 1;
+						$ptCap = $this->db->where('name', 'ptCap')->get('adminSettings');
+						$ptCapVal = $ptCap->row(0)->value;
+						$d = $killDate->format('Y-m');
+						$ptAmtChk = $this->db->where('submittedBy', $user)->where('month', $d)->get('vwptcap');
+						if($ptAmtChk->num_rows() > 0 && $ptAmtChk->row(0)->total >= $ptCapVal){
+							$overPtCap = 1;
 						}
 					}
+					
+					//Check to see if the kill exists
+					$dbchk = $this->db->where('killID', $killID)->get('kills');
+					if($dbchk->num_rows() > 0){
+						//It exists, so notify user as such
+						echo "This kill has already been submitted.";
+					} elseif ((in_array($vicShipTypeID,$carriers) && $this->vars['inCapSwarm'] == 1) || !in_array($vicShipTypeID,$carriers)) {
+						//Kill does NOT exist in db, so lets see if there is a payout set for this ship
+						$poChk = $this->db->select('p.payoutAmount, p.payoutType, p.typeID, p.id, p.typeName')->from('payouts p')->join('payoutTypes pt','pt.id = p.payoutType')->where('p.typeID', $vicShipTypeID)->where('pt.active', '1')->get();
+						$payoutArr = array();
+						if($poChk->num_rows() > 0){
+							if($vicCorpID == 667531913){
+								$bonusamt = $this->db->where('name', 'waffeBonus')->get('adminSettings');
+								$bonusCap = $this->db->where('name', 'waffeBonusCap')->get('adminSettings');
+								if($bonusamt->num_rows() > 0){
+									$bonus = $bonusamt->row(0)->value;
+								} else {
+									$bonus = 0;
+								}
+								if($bonusCap->num_rows() > 0){
+									$bonusCapAmt = $bonusCap->row(0)->value;
+								} else {
+									$bonusCapAmt = 0;
+								}
+							}
+							foreach($poChk->result() as $row){
+								if($vicCorpID == 667531913){
+									$bonusPay = $row->payoutAmount * $bonus;
+									if($bonusPay <= $bonusCapAmt){
+										$payout = $row->payoutAmount + $bonusPay;
+									} else {
+										$payout = $row->payoutAmount + $bonusCapAmt;
+									}
+								} else {
+									$payout = $row->payoutAmount;
+								}
+								$payoutArr[$row->payoutType] = $payout;
+							}
+							$payouts = serialize($payoutArr);
+							$dti = array('killID' => $killID,
+										'killTime' => $killTime,
+										'crest_link' => $crestLink,
+										'bcast' => $bcastText,
+										'fit' => serialize($fit),
+										'attackers' => serialize($attackerArr),
+										'victimName' => $vicName,
+										'victimID' => $vicID,
+										'corpID' => $vicCorpID,
+										'corpName' => $vicCorpName,
+										'shipID' => $vicShipTypeID,
+										'shipName' => $vicShipTypeName,
+										'sysID' => $sysID,
+										'sysName' => $sysName,
+										'regID' => $regID,
+										'regName' => $regName,
+										'secStatus' => $secStatus,
+										'availablePayouts' => $payouts,
+										'submittedBy' => $user,
+										'ptQualified' => $ptQualified,
+										'overPtCap' => $overPtCap);
+							$this->db->insert('kills', $dti);
+
+							//Add a thing to process the corporation info and insert that shit too.
+							$this->updateCorpData($vicCorpID);
+							echo "The loss for $vicName in a $vicShipTypeName has been submitted, thank you.";
+						} else {
+							echo "We are currently not reimbursing this ship type. If you feel this is in error, please contact the reimbursement team.";
+						}
+					} else {
+						echo "You are not currently in capswarm and thus not eligible for peace time reimbursement for a carrier.";
+					}
 				} else {
-					echo "You have not entered a valid CREST link, please try again.";
+					echo "This loss is too old. You may only submit losses up to <b>" . $allowedDateDiff . "</b> days. Your loss is <b>" . $dayDiff."</b> days old.";
 				}
 			} else {
 				echo "You are either not logged in, or you have been banned from reimbursement.";
@@ -445,9 +364,8 @@ class Home extends CI_Controller {
 
 	function updateCorpData($corpID){
 		//Get the public corp info from ESI, store it into `corporations` and then grab the public alliance data and store that as well.
-		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
-		$dataArray = json_decode($data, TRUE);
-		if(count($dataArray) > 0){
+		$dataArray = $this->getCorporation($corpID);
+		if($dataArray){
 			if(isset($dataArray['alliance_id'])){
 				$allianceID = $dataArray['alliance_id'];
 			} else {
@@ -463,9 +381,8 @@ class Home extends CI_Controller {
 		}
 
 		if($allianceID > 0){
-			$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
-			$dataArray = json_decode($data, TRUE);
-			if(count($dataArray) > 0){
+			$dataArray = $this->getAlliance($allianceID);
+			if($dataArray){
 				$dti = array(
 				             "allianceID"	=> $allianceID,
 				             "allianceName"	=>	$dataArray['alliance_name'],
@@ -473,6 +390,264 @@ class Home extends CI_Controller {
 				             );
 				$this->db->replace("alliances", $dti);
 			}
+		}
+	}
+
+	function getKillData($link) {
+		$ret = array("err" => FALSE, "errMsg" => "", "data" => array());
+		$low = array('11','12','13','14','15','16','17','18');
+		$med = array('19','20','21','22','23','24','25','26');
+		$high = array('27','28','29','30','31','32','33','34');
+		$rigs = array('92','93','94','95','96','97','98','99');
+		$fit = array();
+		// CCP changed the links in game to ESI, which uses a different case for var names, so now we need to handle that. We want to accept both CREST and ESI, so this is the solution.
+		if(strpos($link, "crest") > 0) {
+			//CREST Link
+			$cD = $this->curllib->makeRequest('GET', $link);
+			$crestData = json_decode($cD, TRUE);
+			if(isset($crestData['exceptionType']) && $crestData['exceptionType'] == 'ForbiddenError'){
+				$ret['errMsg'] = "There was an error, please check your link and try again. If you continue to see this error, please contact an administrator.";
+				$ret['err'] = TRUE;
+				return $ret;
+			}
+			$ret['data']['killID'] = $crestData['killID'];
+			$ret['data']['killTime'] = $crestData['killTime'];
+			$ret['data']['numAttackers'] = $crestData['attackerCount'];
+			$ret['data']['sysID'] = $crestData['solarSystem']['id'];
+			$ret['data']['sysName'] = $crestData['solarSystem']['name'];
+			$ret['data']['vicName'] = $crestData['victim']['character']['name'];
+			$ret['data']['vicID'] = $crestData['victim']['character']['id'];
+			$ret['data']['vicShipTypeID'] = $crestData['victim']['shipType']['id'];
+			$ret['data']['vicShipTypeName'] = $crestData['victim']['shipType']['name'];
+			$ret['data']['vicCorpID'] = $crestData['victim']['corporation']['id'];
+			$ret['data']['vicCorpName'] = $crestData['victim']['corporation']['name'];
+			$ret['data']['damageTaken'] = $crestData['victim']['damageTaken'];
+			$attackers = $crestData["attackers"];
+			$attackerArr = array();
+			$i = 0;
+			if(count($attackers) > 0){
+				foreach($attackers as $key => $value){
+					$alliance = '';
+					if(isset($value['alliance'])){
+						$alliance = $value['alliance']['name'];
+					}
+					if(isset($value['shipType'])){
+						$shiptype = $value['shipType']['name'];
+					} else {
+						$shiptype = "Unknown";
+					}
+					if(isset($value['character'])){
+							$character = $value['character']['name'];
+					} else {
+						$character = 'Unknown ' . $i;
+					}
+					if(isset($value['weaponType'])){
+						$weaponType = $value['weaponType']['name'];
+					} else {
+						$weaponType = "Unknown";
+					}
+					if(isset($value['corporation'])){
+						$corporation = $value['corporation']['name'];
+					} else {
+						$corporation = "Unknown Corporation";
+					}
+					$attackerArr[$character] = array('corporation' => $corporation,
+													'alliance' => $alliance,
+													'shipType' => $shiptype,
+													'weaponType' => $weaponType,
+													'damageDone' => $value['damageDone_str']);
+					$i++;
+				}
+				$ret['data']['attackerArr'] = $attackerArr;
+			} else {
+				$errid = uniqid();
+				$ret['err'] = TRUE;
+				$ret['errMsg'] = "Something went wrong and it was probably CCP's fault. Try again later. If it still doesn't work, give this to kilgarth: " . count($attackers) . " | ".$errid;
+				$fn = $errid.".txt";
+				file_put_contents($fn, $cD);
+				return $ret;
+			}
+
+			foreach($crestData['victim']['items'] as $item){
+				if(in_array($item['flag'], $high)){
+					$fit['high'][] = $item['itemType']['name'];
+				} elseif(in_array($item['flag'], $med)){
+					$fit['med'][] = $item['itemType']['name'];
+				} elseif(in_array($item['flag'], $low)){
+					$fit['low'][] = $item['itemType']['name'];
+				} elseif($item['flag'] == 5){
+					$fit['cargo'][] = $item['itemType']['name'];
+				} elseif(in_array($item['flag'], $rigs)){
+					$fit['rigs'][] = $item['itemType']['name'];
+				} else {
+					$fit['other'][] = $item['itemType']['name'];
+				}
+			}
+			$ret['data']['fit'] = $fit;
+		} elseif(strpos($link,"esi") > 0){
+			//ESI Link
+			$cD = $this->curllib->makeRequest('GET', $link);
+			$crestData = json_decode($cD, TRUE);
+			if(isset($crestData['error'])){
+				$ret['errMsg'] = "There was an error, please check your link and try again. If you continue to see this error, please contact an administrator.";
+				$ret['err'] = TRUE;
+				return $ret;
+			}
+			$ret['data']['killID'] = $crestData['killmail_id'];
+			$ret['data']['killTime'] = $crestData['killmail_time'];
+
+			$ret['data']['sysID'] = $crestData['solar_system_id'];
+			$sysData = $this->getSystem($crestData['solar_system_id']);
+			$ret['data']['sysName'] = $sysData['solarSystemName'];
+
+			$ret['data']['vicID'] = $crestData['victim']['character_id'];
+			$charData = $this->getCharacter($crestData['victim']['character_id']);
+			$ret['data']['vicName'] = $charData['name'];
+
+			$ret['data']['vicShipTypeID'] = $crestData['victim']['ship_type_id'];
+			$shipData = $this->getItem($crestData['victim']['ship_type_id'])
+			$ret['data']['vicShipTypeName'] = $shipData['typeName'];
+
+			$ret['data']['vicCorpID'] = $crestData['victim']['corporation_id'];
+			$corpData = $this->getCorporation($crestData['victim']['corporation_id']);
+			$ret['data']['vicCorpName'] = $corpData['corporation_name'];
+
+			$ret['data']['damageTaken'] = $crestData['victim']['damage_taken'];
+
+			$attackers = $crestData["attackers"];
+			$ret['data']['numAttackers'] = count($attackers);
+			$attackerArr = array();
+			$i = 0;
+			if(count($attackers) > 0){
+				foreach($attackers as $a){
+					$alliance = '';
+					if(isset($a['alliance_id'])){
+						$allianceData = $this->getAlliance($a['alliance_id']);
+						$alliance = $allianceData['alliance_name'];
+					}
+					if(isset($a['ship_type_id'])){
+						$shipData = $this->getItem($a['ship_type_id']);
+						$shiptype = $shipData['typeName'];
+					} else {
+						$shiptype = "Unknown";
+					}
+					if(isset($a['character_id'])){
+						$charData = $this->getCharacter($a['character_id']);
+						$character = $charData['name'];
+					} else {
+						$character = 'Unknown '.$i;
+					}
+					if(isset($a['weapon_type_id'])){
+						$weaponData = $this->getItem($a['weapon_type_id']);
+						$weaponType = $weaponData['typeName'];
+					} else {
+						$weaponType = "Unknown";
+					}
+					if(isset($a['corporation_id'])){
+						$corpData = $this->getCorporation($a['corporation_id']);
+						$corporation = $corpData['corporation_name'];
+					} else {
+						$corporation = "Unknown Corporation";
+					}
+					$attackerArr[$character] = array('corporation' => $corporation,
+													'alliance' => $alliance,
+													'shipType' => $shiptype,
+													'weaponType' => $weaponType,
+													'damageDone' => $value['damage_done']);
+					$i++;
+				}
+
+				$ret['data']['attackerArr'] = $attackerArr;
+			} else {
+				$errid = uniqid();
+				$ret['err'] = TRUE;
+				$ret['errMsg'] = "Something went wrong and it was probably CCP's fault. Try again later. If it still doesn't work, give this to kilgarth: " . count($attackers) . " | ".$errid;
+				$fn = $errid.".txt";
+				file_put_contents($fn, $cD);
+				return $ret;
+			}
+
+			foreach($crestData['victim']['items'] as $item){
+				$itemData = $this->getItem($item['item_type_id']);
+				if(in_array($item['flag'], $high)){
+					$fit['high'][] = $itemData['typeName'];
+				} elseif(in_array($item['flag'], $med)){
+					$fit['med'][] = $itemData['typeName'];
+				} elseif(in_array($item['flag'], $low)){
+					$fit['low'][] = $itemData['typeName'];
+				} elseif($item['flag'] == 5){
+					$fit['cargo'][] = $itemData['typeName'];
+				} elseif(in_array($item['flag'], $rigs)){
+					$fit['rigs'][] = $itemData['typeName'];
+				} else {
+					$fit['other'][] = $itemData['typeName'];
+				}
+			}
+			$ret['data']['fit'] = $fit;
+		} else {
+			//Invalid link
+			$ret['err'] = TRUE;
+			$ret['errMsg'] = "Invalid link provided.";
+			return $ret;
+		}
+	}
+
+	function getCharacter($charID) {
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us',$charID));
+		$dataArray = json_decode($data, TRUE);
+		if(count($dataArray) > 0){
+			return $dataArray;
+		} else {
+			return FALSE;
+		}
+	}
+
+	function getCorporation($corpID) {
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
+		$dataArray = json_decode($data, TRUE);
+		if(count($dataArray) > 0){
+			return $dataArray;
+		} else {
+			return FALSE;
+		}
+	}
+
+	function getAlliance($allianceID) {
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
+		$dataArray = json_decode($data, TRUE);
+		if(count($dataArray) > 0){
+			return $dataArray;
+		} else {
+			return FALSE;
+		}
+	}
+
+	function getItem($itemID) {
+		$ret = array();
+		$data = $this->db->where("typeID", $itemID)->get("invTypes");
+		if($data->num_rows() > 0){
+			$ret['typeID'] = $data->row(0)->typeID;
+			$ret['groupID'] = $data->row(0)->groupID;
+			$ret['typeName'] = $data->row(0)->typeName;
+			$ret['marketGroupID'] = $data->row(0)->marketGroupID;
+
+			return $ret;
+		} else {
+			return FALSE;
+		}
+	}
+
+	function getSystem($sysID){
+		$ret = array();
+		$data = $this->db->where("solarSystemID", $sysID)->get("mapSolarSystems");
+		if($data->num_rows() > 0){
+			$ret['regionID'] = $data->row(0)->regionID;
+			$ret['constellationID'] = $data->row(0)->constellationID;
+			$ret['solarSystemName'] = $data->row(0)->solarSystemName;
+
+			return $ret;
+		} else {
+			return FALSE;
 		}
 	}
 }
