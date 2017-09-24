@@ -36,19 +36,18 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-	var skClone = $("#submitKillBody").clone();
 	$("#submitKillShow").click(function(){
 		$("#submitKill").modal('show');
 	})
-		$("#banUserShow").click(function(){
-			$("#banUser").modal('show');
-		})
-	$('#submitKill').on('hidden.bs.modal', function () {
-		var skClone1 = skClone.clone();
-		$("#submitKillBody").replaceWith(skClone1);
+	$("#banUserShow").click(function(){
+		$("#banUser").modal('show');
 	})
-
 });
+
+	function clearSubmitKill() {
+		var skClone = document.getElementById("submitKillBodyCopy")
+		$("#submitKillBody").html(skClone.innerHTML)
+	}
 
 	function submitKill() {
 		var crestLink = document.getElementById("crestLink").value;
@@ -208,8 +207,8 @@ if($vars['isReimDir'] == 1){?>
   <div class="modal-dialog modal-lg" style="width: 50%">
     <div class="modal-content">
       <div class="modal-header">
+        <h4 class="modal-title">Submit Kill <button type="button" class="btn btn-outline-danger" onclick="clearSubmitKill()" value="Reset">Reset</button></h4>
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">Submit Kill</h4>
       </div>
       <div class="modal-body" id="submitKillBody">
 		<div class="input-group">
@@ -222,11 +221,26 @@ if($vars['isReimDir'] == 1){?>
 			<?php echo form_textarea(array('name' => 'bcast', 'id' => 'bcast', 'class' => 'form-control')); ?>
 		</div>
 		<br>
-		<?php echo form_submit(array('name' => 'submit', 'id' => 'submit', 'value' => 'Submit', 'class' => 'btn btn-outline-success', 'onclick' => 'submitKill()')); ?>
+		<span><?php echo form_submit(array('name' => 'submit', 'id' => 'submit', 'value' => 'Submit', 'class' => 'btn btn-outline-success', 'onclick' => 'submitKill()')); ?></span>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div style="display: none;">
+	<div class="modal-body" id="submitKillBodyCopy">
+		<div class="input-group">
+			<span class="input-group-addon">CREST Link or ESI Link</span>
+			<?php echo form_input(array('name' => 'crestLink', 'id' => 'crestLink', 'class' => 'form-control')); ?>
+		</div>
+		<br>
+		<div class="input-group">
+			<span class="input-group-addon">Broadcast or Op Post</span>
+			<?php echo form_textarea(array('name' => 'bcast', 'id' => 'bcast', 'class' => 'form-control')); ?>
+		</div>
+		<br>
+		<span><?php echo form_submit(array('name' => 'submit', 'id' => 'submit', 'value' => 'Submit', 'class' => 'btn btn-outline-success', 'onclick' => 'submitKill()')); ?></span>
+	</div>
+</div>
 <?php if($vars["isReimDir"] == 1){ ?>
 	<div class="modal fade" id="banUser" tabindex="-1" role="dialog" aria-hidden="true">
 	  <div class="modal-dialog modal-lg" style="width: 50%">

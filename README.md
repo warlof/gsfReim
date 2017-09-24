@@ -59,6 +59,7 @@ These are the admin settings. You shouldn't need to change a whole lot here, asi
 September 2017:
 	- Added 30/60/90 pap counts to payout screen
 	- Added support for ESI links as well as CREST links for kills.
+	- Changed the way the submit kill modal works so that it is now more persistent.
 
 August 2017:
 	- Updated to Bootstrap 4.
