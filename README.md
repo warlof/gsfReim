@@ -56,6 +56,8 @@ These are the admin settings. You shouldn't need to change a whole lot here, asi
 
 ## Changes
 ```
+October 2017:
+	- Updated core CodeIgniter framework to 3.1.6
 September 2017:
 	- Added 30/60/90 pap counts to payout screen
 	- Added support for ESI links as well as CREST links for kills.
