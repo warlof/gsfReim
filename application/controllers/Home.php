@@ -463,7 +463,7 @@ class Home extends CI_Controller {
 				$ret['err'] = TRUE;
 				$ret['errMsg'] = "Something went wrong and it was probably CCP's fault. Try again later. If it still doesn't work, give this to kilgarth: " . count($attackers) . " | ".$errid;
 				$fn = $errid.".txt";
-				file_put_contents($fn, $cD);
+				file_put_contents($fn, sprintf("%s: %s",$link,$cD));
 				return $ret;
 			}
 
@@ -522,29 +522,51 @@ class Home extends CI_Controller {
 					$alliance = '';
 					if(isset($a['alliance_id'])){
 						$allianceData = $this->getAlliance($a['alliance_id']);
-						$alliance = $allianceData['alliance_name'];
+						if(isset($allianceData['alliance_name'])){
+							$alliance = $allianceData['alliance_name'];
+						} else {
+							$alliance = "Unknown";
+						}
+						
 					}
 					if(isset($a['ship_type_id'])){
 						$shipData = $this->getItem($a['ship_type_id']);
-						$shiptype = $shipData['typeName'];
+						if(isset($shipData['typeName'])){
+							$shiptype = $shipData['typeName'];
+						} else {
+							$shiptype = "Unknown";
+						}
+						
 					} else {
 						$shiptype = "Unknown";
 					}
 					if(isset($a['character_id'])){
 						$charData = $this->getCharacter($a['character_id']);
-						$character = $charData['name'];
+						if(isset($charData['name'])){
+							$character = $charData['name'];
+						} else {
+							$character = "Unknown";
+						}	
 					} else {
 						$character = 'Unknown '.$i;
 					}
 					if(isset($a['weapon_type_id'])){
 						$weaponData = $this->getItem($a['weapon_type_id']);
-						$weaponType = $weaponData['typeName'];
+						if(isset($weaponData['typeName'])){
+							$weaponType = $weaponData['typeName'];
+						} else {
+							$weaponType = "Unknown";
+						}
 					} else {
 						$weaponType = "Unknown";
 					}
 					if(isset($a['corporation_id'])){
 						$corpData = $this->getCorporation($a['corporation_id']);
-						$corporation = $corpData['corporation_name'];
+						if(isset($corpData['corporation_name'])){
+							$corporation = $corpData['corporation_name'];
+						} else {
+							$corporation = "Unknown";
+						}
 					} else {
 						$corporation = "Unknown Corporation";
 					}
@@ -562,7 +584,7 @@ class Home extends CI_Controller {
 				$ret['err'] = TRUE;
 				$ret['errMsg'] = "Something went wrong and it was probably CCP's fault. Try again later. If it still doesn't work, give this to kilgarth: " . count($attackers) . " | ".$errid;
 				$fn = $errid.".txt";
-				file_put_contents($fn, $cD);
+				file_put_contents($fn, sprintf("%s: %s",$link,$cD));
 				return $ret;
 			}
 
