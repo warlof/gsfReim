@@ -16,7 +16,7 @@ build:
 web:
   locations:
     '/':
-      root: ''
+      root: '/web'
       passthru: '/index.php'
 
 disk: 2048
