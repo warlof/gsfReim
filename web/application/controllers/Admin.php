@@ -344,15 +344,27 @@ class Admin extends CI_Controller {
 				if($this->config->item("getStats")){
 					$this->load->model("User_model");
 					$loginStats = $this->User_model->getLoginStats($killData->row(0)->submittedBy);
-					$mumbleDate = $loginStats['lastMumble'];
-					$mumbleDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastMumble']);
-					$jabberDate = $loginStats['lastJabber'];
-					$jabberDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastJabber']);
-					$forumsDate = $loginStats['lastActive'];
-					$forumsDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastActive']);
-					$thirtyDayPap = $loginStats['participation']['30day'];
-					$sixtyDayPap = $loginStats['participation']['60day'];
-					$ninetyDayPap = $loginStats['participation']['90day'];
+					if(isset($loginStats['participation'])) {
+						$mumbleDate = $loginStats['lastMumble'];
+						$mumbleDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastMumble']);
+						$jabberDate = $loginStats['lastJabber'];
+						$jabberDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastJabber']);
+						$forumsDate = $loginStats['lastActive'];
+						$forumsDiff = $this->dateDiff(date("Y-m-d"), $loginStats['lastActive']);
+						$thirtyDayPap = $loginStats['participation']['30day'];
+						$sixtyDayPap = $loginStats['participation']['60day'];
+						$ninetyDayPap = $loginStats['participation']['90day'];
+					} else {
+						$mumbleDate = "Unknown";
+						$mumbleDiff = 0;
+						$jabberDate = "Unknown";
+						$jabberDiff = 0;
+						$forumsDate = "Unknown";
+						$forumsDiff = 0;
+						$thirtyDayPap = 0;
+						$sixtyDayPap = 0;
+						$ninetyDayPap = 0;
+					}
 				}
 				$payoutArr = unserialize($killData->row(0)->availablePayouts);
 				$payoutTypes = array_keys($payoutArr);

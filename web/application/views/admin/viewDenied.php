@@ -47,6 +47,7 @@
 							<th></th>
 							<th>Broadcast</th>
 							<th>Victim</th>
+							<th>Forum Name</th>
 							<th>Corporation</th>
 							<th>Kill Time</th>
 							<th>System</th>
@@ -73,6 +74,7 @@
 									<td>No Broadcast</td>
 								<?php } ?>
 								<td id="vicName-<?php echo $row->killID; ?>"><?php echo $row->victimName; ?></td>
+								<td><?php echo $row->submittedBy; ?></td>
 								<td><?php echo $row->corpName; ?></td>
 								<td><?php echo $row->killTime; ?></td>
 								<td><?php echo $row->sysName; ?></td>

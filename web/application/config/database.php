@@ -2,10 +2,10 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 $relationships = getenv("PLATFORM_RELATIONSHIPS");
 if(!$relationships){
-	$db['host'] = "localhost";
+	$db['host'] = "127.0.0.1";
 	$db['username'] = "";
 	$db['password'] = "";
-	$db['path'] = "gsfReim";
+	$db['path'] = "";
 } else {
 	$relArray = json_decode(base64_decode($relationships), TRUE);
 	$db = $relArray["database"][0];
@@ -97,6 +97,29 @@ $db['default'] = array(
 	'char_set' => 'utf8',
 	'dbcollat' => 'utf8_general_ci',
 	'swap_pre' => '',
+	'encrypt' => FALSE,
+	'compress' => FALSE,
+	'stricton' => FALSE,
+	'failover' => array(),
+	'save_queries' => TRUE
+);
+
+$db['vilerat'] = array(
+	'dsn'	=> '',
+	'hostname' => '127.0.0.1',
+	'username' => '',
+	'password' => '',
+	'database' => '',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => FALSE,
+	'db_debug' => TRUE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'autoinit' => TRUE,
 	'encrypt' => FALSE,
 	'compress' => FALSE,
 	'stricton' => FALSE,

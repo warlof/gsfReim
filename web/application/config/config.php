@@ -43,11 +43,26 @@ $config['base_url'] = 'https://'.$host;
  * 
  */
  
-$config['AUTH_METHOD'] = "CROWD";			//Set to INTERNAL to use internal authentication.
-$config['ADMIN_PASSWORD'] = 'asdqwe123';	//Set to whatever you want the admin account password to be.
-$config['ALLOW_REGISTRATION'] = TRUE;		//Only applies to when using internal auth, will not affect any external authentication.
+$config['AUTH_METHOD'] = "CROWD";			// Set to INTERNAL to use internal authentication.
+$config['ADMIN_PASSWORD'] = 'asdqwe123';	// Set to whatever you want the admin account password to be.
+$config['ALLOW_REGISTRATION'] = TRUE;		// Only applies to when using internal auth, will not affect any external authentication.
 
-$config['getStats'] = FALSE;
+$config['REIM_NAME'] = "Affordable Care";	// Name that will be displayed in header.
+
+$config['CROWD_USERNAME'] = '';
+$config['CROWD_PASSWORD'] = '';
+$config['CROWD_URL'] = '';
+$config['AUTH_GROUPS'] = array(
+	"REIMBURSEMENT" => "[SIG] Incompetence Compensators",	// Base reimbursement role
+	"REIMDIRS"		=> "[A] Directors of Reimbursement",	// Admin role
+	"CAPSWARM"		=> "[SIG] CapSwarm",					// Group for verifying capswarm membership
+	"CAPSWARM_REIM"	=> "[A] Directors of CapSwarm",			// Group that can handle capswarm reimbursement
+	"ADMINS"		=> array("Administrators")
+);
+
+$config['MANAGER_TOKEN'] = '';
+$config['MANAGER_BASE'] = '';
+$config['getStats'] = TRUE;
 
 
 /*
@@ -393,9 +408,9 @@ $config['encryption_key'] = $encKey;
 |
 */
 
-$config['sess_driver'] = 'redis';
-$config['sess_cookie_name'] = 'ci_session';
-$config['sess_save_path'] = 'tcp://'.$relArray["redis"][0]["host"].":".$relArray["redis"][0]["port"];
+$config['sess_driver'] = 'memcached';
+$config['sess_cookie_name'] = 'rc_session';
+$config['sess_save_path'] = '127.0.0.1:11211';
 $config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;

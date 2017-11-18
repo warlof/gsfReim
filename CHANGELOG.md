@@ -9,6 +9,13 @@
 
 
 
+## Refactor
+  - Move docroot to subdir and update the configs so that everything variable is in one location
+  ([edc68165](git@github.com:kilgarth/gsfReim/commit/edc681655dfac58aa9d2d0c92535b2c10119a5a2))
+
+
+
+
 
 ---
 <sub><sup>*Generated with [git-changelog](https://github.com/rafinskipg/git-changelog). If you have any problems or suggestions, create an issue.* :) **Thanks** </sub></sup>
