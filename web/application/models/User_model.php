@@ -4,11 +4,12 @@ class User_model extends CI_Model {
 	function __construct()
 	{
 		parent::__construct();
-		$this->crowdUrl = "";
-		$this->crowdUser = "";
-		$this->crowdPass = "";
-		$this->managerToken = "";
-		$this->managerBase = "";
+		$this->crowdUrl = $this->config->item("CROWD_URL");;
+		$this->crowdUser = $this->config->item("CROWD_USERNAME");
+		$this->crowdPass = $this->config->item("CROWD_PASSWORD");
+		$this->managerToken = $this->config->item("MANAGER_TOKEN");
+		$this->managerBase = $this->config->item("MANAGER_BASE");
+		$this->authGroups = $this->config->item("AUTH_GROUPS");
 	}
 	function get_val($str, $key1, $key2) {
 		if(strpos('@@@' . $str, $key1) <> 0 && strpos('@@@' . $str, $key2) <> 0) {
@@ -68,24 +69,27 @@ class User_model extends CI_Model {
 
 					}
 
-					if(in_array("[SIG] Incompetence Compensators", $groupData)){
+					if(in_array($this->authGroups['REIMBURSEMENT'], $groupData)){
 						$isReim = 1;
 					}
-					if(in_array("[A] Directors of Reimbursement", $groupData)){
+					if(in_array($this->authGroups['REIMDIRS'], $groupData)){
 						$isReimDir = 1;
 					}
-					if(in_array('[SIG] CapSwarm', $groupData)){
+					if(in_array($this->authGroups['CAPSWARM'], $groupData)){
 						$inCapSwarm = 1;
 					}
-					if(in_array('[A] Directors of CapSwarm',$groupData)){
+					if(in_array($this->authGroups['CAPSWARM_REIM'],$groupData)){
 						$isCapDir = 1;
 						$isReimDir = 1;
 					}
-					if(in_array('Administrators', $groupData)){
-						$isReim = 1;
-						$isReimDir = 1;
-						$isCapDir = 1;
+					foreach($this->authGroups['ADMINS'] as $admins){
+						if(in_array($admins, $groupData)){
+							$isReim = 1;
+							$isReimDir = 1;
+							$isCapDir = 1;
+						}
 					}
+					
 					$return['isReim'] = $isReim;
 					$return['isReimDir'] = $isReimDir;
 					$return['inCapSwarm'] = $inCapSwarm;

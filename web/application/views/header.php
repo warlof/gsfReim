@@ -3,11 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-	<title>GSF Affordable Care</title>
+	<title><?php echo $this->config->item("REIM_NAME"); ?></title>
 	<script src='https://code.jquery.com/jquery-2.1.1.min.js' type="text/javascript"></script>
 	<script src="/assets/js/tether.js"></script>
-	<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
-	<link rel="stylesheet" href="https://bootswatch.com/4-alpha/cosmo/bootstrap.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> 
+	<!--<link rel="stylesheet" href="/assets/css/bootstrap.css">-->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 	<link rel="icon" type="image/x-icon" href="/favicon.ico">
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -142,7 +142,7 @@ if($vars['isReimDir'] == 1){?>
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-	    <a class="navbar-brand" href="<?php echo base_url('home'); ?>">GSF Affordable Care</a>
+	    <a class="navbar-brand" href="<?php echo base_url('home'); ?>"><?php echo $this->config->item("REIM_NAME"); ?></a>
 	    <!-- Collect the nav links, forms, and other content for toggling -->
 	    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
 	      <ul class="navbar-nav mr-auto">
