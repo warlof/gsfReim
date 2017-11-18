@@ -408,9 +408,9 @@ $config['encryption_key'] = $encKey;
 |
 */
 
-$config['sess_driver'] = 'memcached';
-$config['sess_cookie_name'] = 'rc_session';
-$config['sess_save_path'] = '127.0.0.1:11211';
+$config['sess_driver'] = 'redis';
+$config['sess_cookie_name'] = 'ci_session';
+$config['sess_save_path'] = 'tcp://'.$relArray["redis"][0]["host"].":".$relArray["redis"][0]["port"];
 $config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
