@@ -25,7 +25,15 @@
 		.ui-datepicker{z-index:115111 !important;}
 		.ui-autocomplete{z-index:115111 !important;}
 		.navbar-collapse { margin-bottom: -15px; }
-		.navbar { margin-bottom: 10px; }
+		.navbar {
+			margin-bottom: 10px;
+			background-color: #666666;
+		}
+		.navbar-light .navbar-brand, .navbar-light .navbar-toggler {
+			color: rgb(232, 232, 232);
+		}
+		.navbar-light .navbar-nav .nav-link { color: rgb(232, 232, 232); }
+		.navbar-light .navbar-text { color: rgb(232,232,232); }
 		.modal-lg { max-width: 1000px; }
 		body {
 			font-size: 0.9rem;
@@ -138,7 +146,7 @@ if($vars['isReimDir'] == 1){?>
 	</script>
 <?php } ?>
 <body>
-	<nav class="navbar navbar-toggleable-md navbar-inverse bg-primary">
+	<nav class="navbar navbar-toggleable-md navbar-light">
       <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>

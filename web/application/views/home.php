@@ -183,7 +183,8 @@ $(document).ready(function() {
 										<?php $fitArr = unserialize($row->fit);
 										$newFitArr = array();
 										foreach($fitArr as $key => $value){
-											$newFitArr[$key] = array_count_values($value);
+
+											$newFitArr[$key] = array_count_values(array_filter($value));
 										}
 										if(isset($newFitArr['high'])){
 											echo "<h4>High</h4>";

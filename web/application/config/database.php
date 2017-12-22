@@ -5,7 +5,7 @@ if(!$relationships){
 	$db['host'] = "127.0.0.1";
 	$db['username'] = "";
 	$db['password'] = "";
-	$db['path'] = "";
+	$db['path'] = "affordablecare";
 } else {
 	$relArray = json_decode(base64_decode($relationships), TRUE);
 	$db = $relArray["database"][0];
