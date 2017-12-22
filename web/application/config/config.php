@@ -53,16 +53,16 @@ $config['CROWD_USERNAME'] = '';
 $config['CROWD_PASSWORD'] = '';
 $config['CROWD_URL'] = '';
 $config['AUTH_GROUPS'] = array(
-	"REIMBURSEMENT" => "[SIG] Incompetence Compensators",	// Base reimbursement role
-	"REIMDIRS"		=> "[A] Directors of Reimbursement",	// Admin role
-	"CAPSWARM"		=> "[SIG] CapSwarm",					// Group for verifying capswarm membership
-	"CAPSWARM_REIM"	=> "[A] Directors of CapSwarm",			// Group that can handle capswarm reimbursement
-	"ADMINS"		=> array("Administrators")
+	"REIMBURSEMENT" 	=> "",	// Base reimbursement role
+	"REIMDIRS"		=> "",	// Admin role
+	"CAPSWARM"		=> "",				// Group for verifying capswarm membership
+	"CAPSWARM_REIM"		=> "",			// Group that can handle capswarm reimbursement
+	"ADMINS"		=> array()
 );
 
 $config['MANAGER_TOKEN'] = '';
 $config['MANAGER_BASE'] = '';
-$config['getStats'] = TRUE;
+$config['getStats'] = FALSE;
 
 
 /*
@@ -408,9 +408,9 @@ $config['encryption_key'] = $encKey;
 |
 */
 
-$config['sess_driver'] = 'redis';
-$config['sess_cookie_name'] = 'ci_session';
-$config['sess_save_path'] = 'tcp://'.$relArray["redis"][0]["host"].":".$relArray["redis"][0]["port"];
+$config['sess_driver'] = 'memcached';
+$config['sess_cookie_name'] = 'rc_session';
+$config['sess_save_path'] = '127.0.0.1:11211';
 $config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
