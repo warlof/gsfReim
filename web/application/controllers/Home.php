@@ -372,7 +372,7 @@ class Home extends CI_Controller {
 			}
 			$dti = array(
 			             "corpID"	=> $corpID,
-			             "corpName"	=>	$dataArray['corporation_name'],
+			             "corpName"	=>	$dataArray['name'],
 			             "allianceID"	=>	$allianceID,
 			             "ticker"	=>	$dataArray['ticker']
 			             );
@@ -384,7 +384,7 @@ class Home extends CI_Controller {
 			if($dataArray){
 				$dti = array(
 				             "allianceID"	=> $allianceID,
-				             "allianceName"	=>	$dataArray['alliance_name'],
+				             "allianceName"	=>	$dataArray['name'],
 				             "ticker"	=>	$dataArray['ticker']
 				             );
 				$this->db->replace("alliances", $dti);
@@ -509,7 +509,7 @@ class Home extends CI_Controller {
 
 			$ret['data']['vicCorpID'] = $crestData['victim']['corporation_id'];
 			$corpData = $this->getCorporation($crestData['victim']['corporation_id']);
-			$ret['data']['vicCorpName'] = $corpData['corporation_name'];
+			$ret['data']['vicCorpName'] = $corpData['name'];
 
 			$ret['data']['damageTaken'] = $crestData['victim']['damage_taken'];
 
@@ -616,7 +616,7 @@ class Home extends CI_Controller {
 	}
 
 	function getCharacter($charID) {
-		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/characters/%s/?datasource=tranquility&language=en-us',$charID));
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v3/characters/%s/?datasource=tranquility&language=en-us',$charID));
 		$dataArray = json_decode($data, TRUE);
 		if(count($dataArray) > 0){
 			return $dataArray;
@@ -626,7 +626,7 @@ class Home extends CI_Controller {
 	}
 
 	function getCorporation($corpID) {
-		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v4/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
 		$dataArray = json_decode($data, TRUE);
 		if(count($dataArray) > 0){
 			return $dataArray;
@@ -636,7 +636,7 @@ class Home extends CI_Controller {
 	}
 
 	function getAlliance($allianceID) {
-		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/latest/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
+		$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v3/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
 		$dataArray = json_decode($data, TRUE);
 		if(count($dataArray) > 0){
 			return $dataArray;
