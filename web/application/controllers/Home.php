@@ -66,16 +66,12 @@ class Home extends CI_Controller
             {
                 case $this->vars['isReim']:
                     $this->isReim = true;
-                    break;
                 case $this->vars['isReimDir']:
                     $this->isReimDir = true;
-                    break;
                 case $this->vars['isBanned']:
                     $this->isBanned = true;
-                    break;
                 case $this->vars['isCapDir']:
                     $this->isCapDir = true;
-                    break;
             }
 
             $acceptLosses = $this->db->where('name', 'acceptLosses')->get('adminSettings');
