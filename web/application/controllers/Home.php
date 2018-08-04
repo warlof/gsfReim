@@ -199,7 +199,10 @@ class Home extends CI_Controller
                     if ($dbchk->num_rows() > 0) {
                         //It exists, so notify user as such
                         echo "This kill has already been submitted.";
-                    } elseif ((in_array($crestData['vicShipTypeID'], $carriers) && $this->vars['inCapSwarm'] == 1) || ! in_array($crestData['vicShipTypeID'], $carriers)) {
+                    } elseif (
+                        (in_array($crestData['vicShipTypeID'], $carriers) && $this->vars['inCapSwarm'] == 1) ||
+                        ! in_array($crestData['vicShipTypeID'], $carriers) ||
+                        ! $this->config->item('RESTRICT_CAPITAL')) {
                         //Kill does NOT exist in db, so lets see if there is a payout set for this ship
                         $payoutArr = [];
                         $poChk = $this->db->select('p.payoutAmount, p.payoutType, p.typeID, p.id, p.typeName')
