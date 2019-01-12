@@ -19,7 +19,7 @@ class Api extends CI_Controller {
 	 */
 
 	function getInsurance(){
-		$data = $this->curllib->makeRequest('GET', 'https://esi.tech.ccp.is/v3/insurance/prices/?datasource=tranquility&language=en-us');
+		$data = $this->curllib->makeRequest('GET', 'https://esi.evetech.net/v3/insurance/prices/?datasource=tranquility&language=en-us');
 		$dataArray = json_decode($data, TRUE);
 		if(count($dataArray) > 0){
 			//We have data to work with, process it. First thing we're going to do is nuke the old data, this is unimportant if it gets fucked and lost.
@@ -77,7 +77,7 @@ class Api extends CI_Controller {
 			//We have some data, lets loop and process this shit
 			foreach($corpData->result() as $row){
 				//We're going to be lazy and just use REPLACE INTO's here. Its less work than a SELECT and then UPDATE/INSERT.
-				$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v3/alliances/%s/?datasource=tranquility&language=en-us',$row->allianceID));
+				$data = $this->curllib->makeRequest('GET', sprintf('https://esi.evetech.net/v3/alliances/%s/?datasource=tranquility&language=en-us',$row->allianceID));
 				$dataArray = json_decode($data, TRUE);
 				if(count($dataArray) > 0){
 					$dti = array(
@@ -103,7 +103,7 @@ class Api extends CI_Controller {
 		if($corpData->num_rows() > 0){
 			//We have a list of distinct corp ID's, lets loop this bitch and pull the pub data from CCP
 			foreach($corpData->result() as $row){
-				$data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v4/corporations/%s/?datasource=tranquility&language=en-us',$row->corpID));
+				$data = $this->curllib->makeRequest('GET', sprintf('https://esi.evetech.net/v4/corporations/%s/?datasource=tranquility&language=en-us',$row->corpID));
 				$dataArray = json_decode($data, TRUE);
 				if(count($dataArray) > 0){
 					if(isset($dataArray['alliance_id'])){

@@ -727,7 +727,7 @@ class Home extends CI_Controller
         log_message('debug', '$character_ids content => ' . print_r($character_ids, true));
 
         foreach ($chunks as $chunk) {
-            $data = $this->curllib->makeRequest('POST', 'https://esi.tech.ccp.is/v2/universe/names/', json_encode($chunk), [
+            $data = $this->curllib->makeRequest('POST', 'https://esi.evetech.net/v2/universe/names/', json_encode($chunk), [
                 'Content-Type' => 'application/json',
             ]);
             $names = json_decode($data);
@@ -758,7 +758,7 @@ class Home extends CI_Controller
         log_message('debug', '$corporation_ids content => ' . print_r($corporation_ids, true));
 
         foreach ($chunks as $chunk) {
-            $data = $this->curllib->makeRequest('POST', 'https://esi.tech.ccp.is/v2/universe/names/', json_encode($chunk), [
+            $data = $this->curllib->makeRequest('POST', 'https://esi.evetech.net/v2/universe/names/', json_encode($chunk), [
                 'Content-Type' => 'application/json',
             ]);
             $names = json_decode($data);
@@ -781,7 +781,7 @@ class Home extends CI_Controller
     }
 
     function getCorporation($corpID) {
-        $data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v4/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
+        $data = $this->curllib->makeRequest('GET', sprintf('https://esi.evetech.net/v4/corporations/%s/?datasource=tranquility&language=en-us',$corpID));
         $object = json_decode($data);
 
         if(! is_null($object)){
@@ -800,7 +800,7 @@ class Home extends CI_Controller
         log_message('debug', '$alliance_ids content => ' . print_r($alliance_ids, true));
 
         foreach ($chunks as $chunk) {
-            $data = $this->curllib->makeRequest('POST', 'https://esi.tech.ccp.is/v2/universe/names/', json_encode($chunk), [
+            $data = $this->curllib->makeRequest('POST', 'https://esi.evetech.net/v2/universe/names/', json_encode($chunk), [
                 'Content-Type' => 'application/json',
             ]);
             $names = json_decode($data);
@@ -823,7 +823,7 @@ class Home extends CI_Controller
     }
 
     function getAlliance($allianceID) {
-        $data = $this->curllib->makeRequest('GET', sprintf('https://esi.tech.ccp.is/v3/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
+        $data = $this->curllib->makeRequest('GET', sprintf('https://esi.evetech.net/v3/alliances/%s/?datasource=tranquility&language=en-us',$allianceID));
         $object = json_decode($data);
         if(! is_null($object)){
             return $object;
