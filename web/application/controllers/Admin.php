@@ -40,7 +40,7 @@ class Admin extends CI_Controller {
 	}
 
 	function userMgmt(){
-		if($this->auth_method == "INTERNAL"){
+		if (in_array($this->auth_method, ['INTERNAL', 'ESI'])) {
 			if($this->isReimDir){
 				$data['users'] = $this->db->select("user, active, id")->get('users');
 				$this->load->view('header');
@@ -55,7 +55,7 @@ class Admin extends CI_Controller {
 	}
 	
 	function activateUser(){
-		if($this->auth_method == "INTERNAL"){
+		if (in_array($this->auth_method, ['INTERNAL', 'ESI'])) {
 			if($this->isReimDir){
 				$this->db->where("id", $this->input->post('userID', TRUE))->update('users', array("active" => 1));
 			} else {
@@ -66,7 +66,7 @@ class Admin extends CI_Controller {
 		}
 	}
 	function deactivateUser(){
-		if($this->auth_method == "INTERNAL"){
+		if (in_array($this->auth_method, ['INTERNAL', 'ESI'])) {
 			if($this->isReimDir){
 				$this->db->where("id", $this->input->post('userID', TRUE))->update('users', array("active" => 0));
 			} else {
@@ -77,7 +77,7 @@ class Admin extends CI_Controller {
 		}
 	}
 	function editUser(){
-		if($this->auth_method == "INTERNAL"){
+		if (in_array($this->auth_method, ['INTERNAL', 'ESI'])) {
 			if($this->isReimDir){
 				$uid = xss_clean($this->uri->segment(3));
 				$data['user'] = $this->db->where('id', $uid)->get('users');
@@ -93,7 +93,7 @@ class Admin extends CI_Controller {
 		}
 	}
 	function editGroups(){
-		if($this->auth_method == "INTERNAL"){
+		if (in_array($this->auth_method, ['INTERNAL', 'ESI'])) {
 			if($this->isReimDir){
 				$isReim = $this->input->post("isReim", TRUE);
 				$isReimDir = $this->input->post("isReimDir", TRUE);

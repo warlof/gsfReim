@@ -178,7 +178,7 @@ if($vars['isReimDir'] == 1){?>
 			        		<?php echo anchor('admin/viewSettings', 'Preferences', 'class="dropdown-item"'); ?>
 			        		<?php echo anchor('admin/viewLog', 'View Logs', 'class="dropdown-item"'); ?>
 			        		<?php echo anchor('admin/viewGroupBans', "Group Bans", 'class="dropdown-item"'); ?>
-			        		<?php if($this->config->item('AUTH_METHOD') == "INTERNAL"){ ?>
+			        		<?php if(in_array($this->config->item('AUTH_METHOD'), ['INTERNAL', 'ESI'])) { ?>
 			        			<?php echo anchor('admin/userMgmt', "User Management", 'class="dropdown-item"'); ?>
 			        		<?php } ?>
 			        		<?php } ?>
@@ -194,6 +194,11 @@ if($vars['isReimDir'] == 1){?>
 		     </ul>
 			<ul class="navbar-form navbar-right">
 				<?php if (!$vars['logged_in']) { ?>
+                <?php if ($this->config->item('AUTH_METHOD') == 'ESI') { ?>
+                <a href="<?php echo base_url('auth'); ?>">
+                    <img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-black-small.png"  alt="EVE SSO Login" />
+                </a>
+                <?php } else { ?>
 				<form class="form-inline" action="<?php echo base_url('login'); ?>" method="post" accept-charset="utf-8">
 					<input class="form-control mr-sm-2" type="text" id="user" name="user" placeholder="User Name">
 					<input class="form-control mr-sm-2" type="password" id="password" name="password" placeholder="Password">
@@ -202,8 +207,8 @@ if($vars['isReimDir'] == 1){?>
 					if($this->config->item('AUTH_METHOD') == "INTERNAL" && $this->config->item("ALLOW_REGISTRATION")){ ?>
 						<button type="button" class="btn btn-outline-success my-2 my-sm-0" id="registerAccount" value="Register">Register</button>
 					<?php } ?>
-					</form>
-
+                </form>
+                <?php } ?>
 				<?php } else { ?>
 					<span class="navbar-text" style="padding-right: 5px;">Welcome, <?php echo $vars['user']; ?></span>
 					<?php echo anchor('login/logout','Logout', 'class="btn btn-outline-danger"');
