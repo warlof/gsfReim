@@ -43,7 +43,7 @@ $config['base_url'] = 'https://'.$host;
  * 
  */
  
-$config['AUTH_METHOD'] = "CROWD";			// Set to INTERNAL to use internal authentication.
+$config['AUTH_METHOD'] = "ESI";			    // Set to INTERNAL to use internal authentication - Set to ESI to use EVE SSO.
 $config['ADMIN_PASSWORD'] = 'asdqwe123';	// Set to whatever you want the admin account password to be.
 $config['ALLOW_REGISTRATION'] = true;		// Only applies to when using internal auth, will not affect any external authentication.
 
