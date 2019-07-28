@@ -3,9 +3,12 @@
 		var isReimEle = document.getElementById("1");
 		var isReimDirEle = document.getElementById("2");
 		var inCapswarmEle = document.getElementById("3");
+		var isCapDirEle = document.getElementById('4');
+
 		var isReim = 0;
 		var isReimDir = 0;
 		var inCapswarm = 0;
+		var isCapDir = 0;
 		
 		if(isReimEle.checked){
 			isReim = 1;
@@ -16,11 +19,13 @@
 		if(inCapswarmEle.checked){
 			inCapswarm = 1;
 		}
+		if (isCapDirEle.checked)
+		    isCapDir = 1;
 		
 		$.ajax({
 			url: "<?php echo base_url('admin/editGroups'); ?>",
 			type: 'POST',
-			data: {userID: uid, isReim: isReim, isReimDir: isReimDir, inCapswarm: inCapswarm},
+			data: {userID: uid, isReim: isReim, isReimDir: isReimDir, inCapswarm: inCapswarm, isCapDir: isCapDir},
 			success: function(msg) {
 				alert(msg);
 				location.reload();
@@ -49,26 +54,28 @@
 				<h4>Groups</h4>
 				<?php
 					$gids = explode(",", $user->row(0)->gids);
-					if(in_array(1,$gids)){
+                    $isReim = 0;
+                    $isReimDir = 0;
+                    $inCapswarm = 0;
+                    $isCapDir = 0;
+
+					if(in_array(1,$gids))
 						$isReim = 1;
-					} else {
-						$isReim = 0;
-					}
-					if(in_array(2,$gids)){
+
+                    if(in_array(2,$gids))
 						$isReimDir = 1;
-					} else {
-						$isReimDir = 0;
-					}
-					if(in_array(3,$gids)){
+
+                    if(in_array(3,$gids))
 						$inCapswarm = 1;
-					} else {
-						$inCapswarm = 0;
-					}
+
+                    if (in_array(4, $gids))
+                        $isCapDir = 1;
 				?>
 				<form>
 					<input type="checkbox" name="isReim" value="Reimburser" id="1" <?php if($isReim == 1){ echo "checked";} ?>>Reimburser</input><br />
 					<input type="checkbox" name="isReimDir" value="Reimbursement Director" id="2" <?php if($isReimDir == 1){ echo "checked";} ?>>Reimbursement Director</input><br />
 					<input type="checkbox" name="inCapswarm" value="Capswarm" id="3" <?php if($inCapswarm == 1){ echo "checked";} ?>>Capswarm</input><br />
+					<input type="checkbox" name="isCapDir" value="Capitals Director" id="4" <?php if($isCapDir == 1){ echo "checked";} ?>>Capitals Director</input><br />
 				</form>
 				<br>
 				<button class="btn btn-primary btn-sm" value="Edit Groups" onClick="editGroups('<?php echo $user->row(0)->id; ?>')">Edit Groups</button>

@@ -62,17 +62,17 @@ class Home extends CI_Controller
 
             $this->logged_in = true;
 
-            switch (1)
-            {
-                case $this->vars['isReim']:
-                    $this->isReim = true;
-                case $this->vars['isReimDir']:
-                    $this->isReimDir = true;
-                case $this->vars['isBanned']:
-                    $this->isBanned = true;
-                case $this->vars['isCapDir']:
-                    $this->isCapDir = true;
-            }
+            if ($this->vars['isReim'] == 1)
+                $this->isReim = true;
+
+            if ($this->vars['isReimDir'] == 1)
+                $this->isReimDir = true;
+
+            if ($this->vars['isBanned'] == 1)
+                $this->isBanned = true;
+
+            if ($this->vars['isCapDir'] == 1)
+                $this->isCapDir = true;
 
             $acceptLosses = $this->db->where('name', 'acceptLosses')->get('adminSettings');
             $this->accLosses = $acceptLosses->row(0)->value;

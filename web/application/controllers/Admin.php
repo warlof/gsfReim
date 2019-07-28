@@ -98,6 +98,7 @@ class Admin extends CI_Controller {
 				$isReim = $this->input->post("isReim", TRUE);
 				$isReimDir = $this->input->post("isReimDir", TRUE);
 				$inCapswarm = $this->input->post("inCapswarm", TRUE);
+				$isCapDir = $this->input->post("isCapDir", TRUE);
 				$uid = $this->input->post('userID', TRUE);
 				
 				$groups = array();
@@ -105,7 +106,8 @@ class Admin extends CI_Controller {
 				if($isReim == 1){$groups[] = 1;}
 				if($isReimDir == 1){$groups[] = 2;}
 				if($inCapswarm == 1){$groups[] = 3;}
-				
+				if($isCapDir == 1){$groups[] = 4;}
+
 				$gids = implode(",", $groups);
 				
 				$this->db->where('id', $uid)->update('users', array("gids" => $gids));
